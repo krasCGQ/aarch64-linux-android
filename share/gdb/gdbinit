@@ -1,6 +1,0 @@
-python
-import sys
-sys.path.insert(0, '/home/aryan/KudProject/src/tc/out/aarch64-cortex_a53-linux-android/share/gcc-7.2.1/python')
-from libstdcxx.v6.printers import register_libstdcxx_printers
-register_libstdcxx_printers (None)
-end
