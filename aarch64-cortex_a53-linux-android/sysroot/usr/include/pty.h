@@ -38,11 +38,11 @@ __BEGIN_DECLS
 
 
 #if __ANDROID_API__ >= 23
-int openpty(int*, int*, char*, const struct termios*, const struct winsize*) __INTRODUCED_IN(23);
-int forkpty(int*, char*, const struct termios*, const struct winsize*) __INTRODUCED_IN(23);
+int openpty(int* __master_fd, int* __slave_fd, char* __slave_name, const struct termios* __termios_ptr, const struct winsize* __winsize_ptr) __INTRODUCED_IN(23);
+int forkpty(int* __master_fd, char* __slave_name, const struct termios* __termios_ptr, const struct winsize* __winsize_ptr) __INTRODUCED_IN(23);
 #endif /* __ANDROID_API__ >= 23 */
 
 
 __END_DECLS
 
-#endif /* _PTY_H */
+#endif

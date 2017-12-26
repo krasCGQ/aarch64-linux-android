@@ -25,14 +25,19 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+
 #ifndef _SYS_FILE_H_
 #define _SYS_FILE_H_
 
 #include <sys/cdefs.h>
 #include <sys/types.h>
 
-/* ANDROID: needed for flock() */
-#include <unistd.h>
 #include <fcntl.h>
 
-#endif /* _SYS_FILE_H_ */
+__BEGIN_DECLS
+
+int flock(int __fd, int __op);
+
+__END_DECLS
+
+#endif

@@ -29,6 +29,19 @@
 #ifndef _SYS_TIMEX_H_
 #define _SYS_TIMEX_H_
 
+#include <sys/cdefs.h>
+#include <sys/types.h>
 #include <linux/timex.h>
 
-#endif /* _SYS_TIMEX_H_ */
+__BEGIN_DECLS
+
+
+#if __ANDROID_API__ >= 24
+int adjtimex(struct timex* __buf) __INTRODUCED_IN(24);
+int clock_adjtime(clockid_t __clock, struct timex* __tx) __INTRODUCED_IN(24);
+#endif /* __ANDROID_API__ >= 24 */
+
+
+__END_DECLS
+
+#endif

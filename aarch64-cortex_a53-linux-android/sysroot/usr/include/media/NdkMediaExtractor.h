@@ -28,19 +28,19 @@
 #ifndef _NDK_MEDIA_EXTRACTOR_H
 #define _NDK_MEDIA_EXTRACTOR_H
 
+#include <sys/cdefs.h>
 #include <sys/types.h>
 
 #include "NdkMediaCodec.h"
 #include "NdkMediaFormat.h"
 #include "NdkMediaCrypto.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+__BEGIN_DECLS
 
 struct AMediaExtractor;
 typedef struct AMediaExtractor AMediaExtractor;
 
+#if __ANDROID_API__ >= 21
 
 /**
  * Create new media extractor
@@ -55,12 +55,14 @@ media_status_t AMediaExtractor_delete(AMediaExtractor*);
 /**
  *  Set the file descriptor from which the extractor will read.
  */
-media_status_t AMediaExtractor_setDataSourceFd(AMediaExtractor*, int fd, off64_t offset, off64_t length);
+media_status_t AMediaExtractor_setDataSourceFd(AMediaExtractor*, int fd, off64_t offset,
+        off64_t length);
 
 /**
  * Set the URI from which the extractor will read.
  */
-media_status_t AMediaExtractor_setDataSource(AMediaExtractor*, const char *location); // TODO support headers
+media_status_t AMediaExtractor_setDataSource(AMediaExtractor*, const char *location);
+        // TODO support headers
 
 /**
  * Return the number of tracks in the previously specified media file
@@ -156,8 +158,8 @@ enum {
     AMEDIAEXTRACTOR_SAMPLE_FLAG_ENCRYPTED = 2,
 };
 
-#ifdef __cplusplus
-} // extern "C"
-#endif
+#endif /* __ANDROID_API__ >= 21 */
+
+__END_DECLS
 
 #endif // _NDK_MEDIA_EXTRACTOR_H

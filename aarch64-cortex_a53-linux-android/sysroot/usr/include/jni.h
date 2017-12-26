@@ -24,35 +24,21 @@
 #ifndef JNI_H_
 #define JNI_H_
 
-#include <sys/cdefs.h>
 #include <stdarg.h>
+#include <stdint.h>
 
-/*
- * Primitive types that match up with Java equivalents.
- */
-#ifdef HAVE_INTTYPES_H
-# include <inttypes.h>      /* C99 */
-typedef uint8_t         jboolean;       /* unsigned 8 bits */
-typedef int8_t          jbyte;          /* signed 8 bits */
-typedef uint16_t        jchar;          /* unsigned 16 bits */
-typedef int16_t         jshort;         /* signed 16 bits */
-typedef int32_t         jint;           /* signed 32 bits */
-typedef int64_t         jlong;          /* signed 64 bits */
-typedef float           jfloat;         /* 32-bit IEEE 754 */
-typedef double          jdouble;        /* 64-bit IEEE 754 */
-#else
-typedef unsigned char   jboolean;       /* unsigned 8 bits */
-typedef signed char     jbyte;          /* signed 8 bits */
-typedef unsigned short  jchar;          /* unsigned 16 bits */
-typedef short           jshort;         /* signed 16 bits */
-typedef int             jint;           /* signed 32 bits */
-typedef long long       jlong;          /* signed 64 bits */
-typedef float           jfloat;         /* 32-bit IEEE 754 */
-typedef double          jdouble;        /* 64-bit IEEE 754 */
-#endif
+/* Primitive types that match up with Java equivalents. */
+typedef uint8_t  jboolean; /* unsigned 8 bits */
+typedef int8_t   jbyte;    /* signed 8 bits */
+typedef uint16_t jchar;    /* unsigned 16 bits */
+typedef int16_t  jshort;   /* signed 16 bits */
+typedef int32_t  jint;     /* signed 32 bits */
+typedef int64_t  jlong;    /* signed 64 bits */
+typedef float    jfloat;   /* 32-bit IEEE 754 */
+typedef double   jdouble;  /* 64-bit IEEE 754 */
 
 /* "cardinal indices and sizes" */
-typedef jint            jsize;
+typedef jint     jsize;
 
 #ifdef __cplusplus
 /*
@@ -606,7 +592,6 @@ struct _JNIEnv {
     { return functions->GetMethodID(this, clazz, name, sig); }
 
 #define CALL_TYPE_METHOD(_jtype, _jname)                                    \
-                                                              \
     _jtype Call##_jname##Method(jobject obj, jmethodID methodID, ...)       \
     {                                                                       \
         _jtype result;                                                      \
@@ -618,12 +603,10 @@ struct _JNIEnv {
         return result;                                                      \
     }
 #define CALL_TYPE_METHODV(_jtype, _jname)                                   \
-                                                              \
     _jtype Call##_jname##MethodV(jobject obj, jmethodID methodID,           \
         va_list args)                                                       \
     { return functions->Call##_jname##MethodV(this, obj, methodID, args); }
 #define CALL_TYPE_METHODA(_jtype, _jname)                                   \
-                                                              \
     _jtype Call##_jname##MethodA(jobject obj, jmethodID methodID,           \
         jvalue* args)                                                       \
     { return functions->Call##_jname##MethodA(this, obj, methodID, args); }
@@ -656,7 +639,6 @@ struct _JNIEnv {
     { functions->CallVoidMethodA(this, obj, methodID, args); }
 
 #define CALL_NONVIRT_TYPE_METHOD(_jtype, _jname)                            \
-                                                              \
     _jtype CallNonvirtual##_jname##Method(jobject obj, jclass clazz,        \
         jmethodID methodID, ...)                                            \
     {                                                                       \
@@ -669,13 +651,11 @@ struct _JNIEnv {
         return result;                                                      \
     }
 #define CALL_NONVIRT_TYPE_METHODV(_jtype, _jname)                           \
-                                                              \
     _jtype CallNonvirtual##_jname##MethodV(jobject obj, jclass clazz,       \
         jmethodID methodID, va_list args)                                   \
     { return functions->CallNonvirtual##_jname##MethodV(this, obj, clazz,   \
         methodID, args); }
 #define CALL_NONVIRT_TYPE_METHODA(_jtype, _jname)                           \
-                                                              \
     _jtype CallNonvirtual##_jname##MethodA(jobject obj, jclass clazz,       \
         jmethodID methodID, jvalue* args)                                   \
     { return functions->CallNonvirtual##_jname##MethodA(this, obj, clazz,   \
@@ -728,10 +708,8 @@ struct _JNIEnv {
     { return functions->GetIntField(this, obj, fieldID); }
     jlong GetLongField(jobject obj, jfieldID fieldID)
     { return functions->GetLongField(this, obj, fieldID); }
-   
     jfloat GetFloatField(jobject obj, jfieldID fieldID)
     { return functions->GetFloatField(this, obj, fieldID); }
-   
     jdouble GetDoubleField(jobject obj, jfieldID fieldID)
     { return functions->GetDoubleField(this, obj, fieldID); }
 
@@ -749,10 +727,8 @@ struct _JNIEnv {
     { functions->SetIntField(this, obj, fieldID, value); }
     void SetLongField(jobject obj, jfieldID fieldID, jlong value)
     { functions->SetLongField(this, obj, fieldID, value); }
-   
     void SetFloatField(jobject obj, jfieldID fieldID, jfloat value)
     { functions->SetFloatField(this, obj, fieldID, value); }
-   
     void SetDoubleField(jobject obj, jfieldID fieldID, jdouble value)
     { functions->SetDoubleField(this, obj, fieldID, value); }
 
@@ -760,7 +736,6 @@ struct _JNIEnv {
     { return functions->GetStaticMethodID(this, clazz, name, sig); }
 
 #define CALL_STATIC_TYPE_METHOD(_jtype, _jname)                             \
-                                                              \
     _jtype CallStatic##_jname##Method(jclass clazz, jmethodID methodID,     \
         ...)                                                                \
     {                                                                       \
@@ -773,13 +748,11 @@ struct _JNIEnv {
         return result;                                                      \
     }
 #define CALL_STATIC_TYPE_METHODV(_jtype, _jname)                            \
-                                                              \
     _jtype CallStatic##_jname##MethodV(jclass clazz, jmethodID methodID,    \
         va_list args)                                                       \
     { return functions->CallStatic##_jname##MethodV(this, clazz, methodID,  \
         args); }
 #define CALL_STATIC_TYPE_METHODA(_jtype, _jname)                            \
-                                                              \
     _jtype CallStatic##_jname##MethodA(jclass clazz, jmethodID methodID,    \
         jvalue* args)                                                       \
     { return functions->CallStatic##_jname##MethodA(this, clazz, methodID,  \
@@ -829,10 +802,8 @@ struct _JNIEnv {
     { return functions->GetStaticIntField(this, clazz, fieldID); }
     jlong GetStaticLongField(jclass clazz, jfieldID fieldID)
     { return functions->GetStaticLongField(this, clazz, fieldID); }
-   
     jfloat GetStaticFloatField(jclass clazz, jfieldID fieldID)
     { return functions->GetStaticFloatField(this, clazz, fieldID); }
-   
     jdouble GetStaticDoubleField(jclass clazz, jfieldID fieldID)
     { return functions->GetStaticDoubleField(this, clazz, fieldID); }
 
@@ -850,10 +821,8 @@ struct _JNIEnv {
     { functions->SetStaticIntField(this, clazz, fieldID, value); }
     void SetStaticLongField(jclass clazz, jfieldID fieldID, jlong value)
     { functions->SetStaticLongField(this, clazz, fieldID, value); }
-   
     void SetStaticFloatField(jclass clazz, jfieldID fieldID, jfloat value)
     { functions->SetStaticFloatField(this, clazz, fieldID, value); }
-   
     void SetStaticDoubleField(jclass clazz, jfieldID fieldID, jdouble value)
     { functions->SetStaticDoubleField(this, clazz, fieldID, value); }
 
@@ -1130,11 +1099,9 @@ extern "C" {
  *
  * Note these are the only symbols exported for JNI by the VM.
  */
-#if 0  /* In practice, these are not exported by the NDK so don't declare them */
 jint JNI_GetDefaultJavaVMInitArgs(void*);
 jint JNI_CreateJavaVM(JavaVM**, JNIEnv**, void*);
 jint JNI_GetCreatedJavaVMs(JavaVM**, jsize, jsize*);
-#endif
 
 #define JNIIMPORT
 #define JNIEXPORT  __attribute__ ((visibility ("default")))
@@ -1144,8 +1111,8 @@ jint JNI_GetCreatedJavaVMs(JavaVM**, jsize, jsize*);
  * Prototypes for functions exported by loadable shared libs.  These are
  * called by JNI, not provided by JNI.
  */
-JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved);
-JNIEXPORT void JNICALL JNI_OnUnload(JavaVM* vm, void* reserved);
+JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void* reserved);
+JNIEXPORT void JNI_OnUnload(JavaVM* vm, void* reserved);
 
 #ifdef __cplusplus
 }

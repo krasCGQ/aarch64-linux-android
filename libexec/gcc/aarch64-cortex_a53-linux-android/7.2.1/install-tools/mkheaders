@@ -53,7 +53,7 @@ if [ x$1 != x ] ; then
   prefix=$1
   shift
 else
-  prefix=/home/aryan/KudProject/src/tc/out/aarch64-cortex_a53-linux-android
+  prefix=/home/krasCGQ/toolchain/out/aarch64-cortex_a53-linux-android
 fi
 
 # Allow for alternate isysroot in which to find headers

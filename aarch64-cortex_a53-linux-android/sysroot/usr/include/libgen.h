@@ -25,6 +25,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+
 #ifndef _LIBGEN_H
 #define _LIBGEN_H
 
@@ -33,16 +34,26 @@
 
 __BEGIN_DECLS
 
-/* On Android these don't modify their input, and use thread-local storage for their results. */
-extern char* basename(const char*);
-extern char* dirname(const char*);
+/*
+ * Including <string.h> will get you the GNU basename, unless <libgen.h> is
+ * included, either before or after including <string.h>.
+ *
+ * Note that this has the wrong argument cv-qualifiers, but doesn't modify its
+ * input and uses thread-local storage for the result if necessary.
+ */
+char* __posix_basename(const char* __path) __RENAME(basename);
+
+#define basename __posix_basename
+
+/* This has the wrong argument cv-qualifiers, but doesn't modify its input and uses thread-local storage for the result if necessary. */
+char* dirname(const char* __path);
 
 #if !defined(__LP64__)
 /* These non-standard functions are not needed on Android; basename and dirname use thread-local storage. */
-extern int dirname_r(const char*, char*, size_t);
-extern int basename_r(const char*, char*, size_t);
+int dirname_r(const char* __path, char* __buf, size_t __n);
+int basename_r(const char* __path, char* __buf, size_t __n);
 #endif
 
 __END_DECLS
 
-#endif /* _LIBGEN_H */
+#endif

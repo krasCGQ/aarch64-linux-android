@@ -855,7 +855,7 @@ namespace std
 #define _GLIBCXX_HAVE_INTTYPES_H 1
 
 /* Define to 1 if you have the `isinf' function. */
-#define _GLIBCXX_HAVE_ISINF 1
+/* #undef _GLIBCXX_HAVE_ISINF */
 
 /* Define to 1 if you have the `isinff' function. */
 /* #undef _GLIBCXX_HAVE_ISINFF */
@@ -864,7 +864,7 @@ namespace std
 /* #undef _GLIBCXX_HAVE_ISINFL */
 
 /* Define to 1 if you have the `isnan' function. */
-#define _GLIBCXX_HAVE_ISNAN 1
+/* #undef _GLIBCXX_HAVE_ISNAN */
 
 /* Define to 1 if you have the `isnanf' function. */
 #define _GLIBCXX_HAVE_ISNANF 1
@@ -921,7 +921,7 @@ namespace std
 #define _GLIBCXX_HAVE_LOGL 1
 
 /* Define to 1 if you have the <machine/endian.h> header file. */
-#define _GLIBCXX_HAVE_MACHINE_ENDIAN_H 1
+/* #undef _GLIBCXX_HAVE_MACHINE_ENDIAN_H */
 
 /* Define to 1 if you have the <machine/param.h> header file. */
 /* #undef _GLIBCXX_HAVE_MACHINE_PARAM_H */
@@ -1342,7 +1342,7 @@ namespace std
 /* #undef _GLIBCXX_HAVE___CXA_THREAD_ATEXIT */
 
 /* Define to 1 if you have the `__cxa_thread_atexit_impl' function. */
-/* #undef _GLIBCXX_HAVE___CXA_THREAD_ATEXIT_IMPL */
+#define _GLIBCXX_HAVE___CXA_THREAD_ATEXIT_IMPL 1
 
 /* Define as const if the declaration of iconv() needs const. */
 /* #undef _GLIBCXX_ICONV_CONST */
@@ -1556,13 +1556,13 @@ namespace std
 #define _GLIBCXX_USE_GETTIMEOFDAY 1
 
 /* Define if get_nprocs is available in <sys/sysinfo.h>. */
-/* #undef _GLIBCXX_USE_GET_NPROCS */
+#define _GLIBCXX_USE_GET_NPROCS 1
 
 /* Define if __int128 is supported on this host. */
 #define _GLIBCXX_USE_INT128 1
 
 /* Define if LFS support is available. */
-/* #undef _GLIBCXX_USE_LFS */
+#define _GLIBCXX_USE_LFS 1
 
 /* Define if code specialized for long long should be used. */
 #define _GLIBCXX_USE_LONG_LONG 1
@@ -1599,7 +1599,7 @@ namespace std
 #define _GLIBCXX_USE_SENDFILE 1
 
 /* Define if struct stat has timespec members. */
-/* #undef _GLIBCXX_USE_ST_MTIM */
+#define _GLIBCXX_USE_ST_MTIM 1
 
 /* Define if sysctl(), CTL_HW and HW_NCPU are available in <sys/sysctl.h>. */
 /* #undef _GLIBCXX_USE_SYSCTL_HW_NCPU */
@@ -1621,7 +1621,7 @@ namespace std
 /* #undef _GLIBCXX_X86_RDRAND */
 
 /* Define to 1 if mutex_timedlock is available. */
-#define _GTHREAD_USE_MUTEX_TIMEDLOCK 0
+#define _GTHREAD_USE_MUTEX_TIMEDLOCK 1
 
 /* Define if all C++11 floating point overloads are available in <math.h>.  */
 #if __cplusplus >= 201103L

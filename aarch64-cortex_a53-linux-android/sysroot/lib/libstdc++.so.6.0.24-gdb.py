@@ -19,8 +19,8 @@ import gdb
 import os
 import os.path
 
-pythondir = '/home/aryan/KudProject/src/tc/out/aarch64-cortex_a53-linux-android/share/gcc-7.2.1/python'
-libdir = '/home/aryan/KudProject/src/tc/out/aarch64-cortex_a53-linux-android/aarch64-cortex_a53-linux-android/lib/../lib64'
+pythondir = '/home/krasCGQ/toolchain/out/aarch64-cortex_a53-linux-android/share/gcc-7.2.1/python'
+libdir = '/home/krasCGQ/toolchain/out/aarch64-cortex_a53-linux-android/aarch64-cortex_a53-linux-android/lib/../lib64'
 
 # This file might be loaded when there is no current objfile.  This
 # can happen if the user loads it manually.  In this case we don't

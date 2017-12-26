@@ -1,36 +1,30 @@
-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-/*
- * Copyright (c) 2016, Linaro Ltd.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 and
- * only version 2 as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- */
-
-#ifndef _RPMSG_H_
-#define _RPMSG_H_
-
+/****************************************************************************
+ ****************************************************************************
+ ***
+ ***   This header was automatically generated from a Linux kernel header
+ ***   of the same name, to make information necessary for userspace to
+ ***   call into the kernel available to libc.  It contains only constants,
+ ***   structures, and macros generated from the original header, and thus,
+ ***   contains no copyrightable information.
+ ***
+ ***   To edit the content of this header, modify the corresponding
+ ***   source file (e.g. under external/kernel-headers/original/) then
+ ***   run bionic/libc/kernel/tools/update_all.py
+ ***
+ ***   Any manual change here will be lost the next time this script will
+ ***   be run. You've been warned!
+ ***
+ ****************************************************************************
+ ****************************************************************************/
+#ifndef _UAPI_RPMSG_H_
+#define _UAPI_RPMSG_H_
 #include <linux/ioctl.h>
 #include <linux/types.h>
-
-/**
- * struct rpmsg_endpoint_info - endpoint info representation
- * @name: name of service
- * @src: local address
- * @dst: destination address
- */
 struct rpmsg_endpoint_info {
-	char name[32];
-	__u32 src;
-	__u32 dst;
+  char name[32];
+  __u32 src;
+  __u32 dst;
 };
-
-#define RPMSG_CREATE_EPT_IOCTL	_IOW(0xb5, 0x1, struct rpmsg_endpoint_info)
-#define RPMSG_DESTROY_EPT_IOCTL	_IO(0xb5, 0x2)
-
+#define RPMSG_CREATE_EPT_IOCTL _IOW(0xb5, 0x1, struct rpmsg_endpoint_info)
+#define RPMSG_DESTROY_EPT_IOCTL _IO(0xb5, 0x2)
 #endif

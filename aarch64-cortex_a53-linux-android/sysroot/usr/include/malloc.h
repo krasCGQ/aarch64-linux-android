@@ -17,23 +17,30 @@
 #ifndef LIBC_INCLUDE_MALLOC_H_
 #define LIBC_INCLUDE_MALLOC_H_
 
-/*
- * Declaration of malloc routines. Bionic uses dlmalloc (see
- * upstream-dlmalloc) but doesn't directly include it here to keep the
- * defined malloc.h interface small.
- */
 #include <sys/cdefs.h>
 #include <stddef.h>
+#include <stdio.h>
 
 __BEGIN_DECLS
 
-extern void* malloc(size_t byte_count) __mallocfunc __wur __attribute__((alloc_size(1)));
-extern void* calloc(size_t item_count, size_t item_size) __mallocfunc __wur __attribute__((alloc_size(1,2)));
-extern void* realloc(void* p, size_t byte_count) __wur __attribute__((alloc_size(2)));
-extern void free(void* p);
+// Remove the workaround once b/37423073 is fixed.
+#if defined(__clang__) && !__has_attribute(alloc_size)
+#define __BIONIC_ALLOC_SIZE(...)
+#else
+#define __BIONIC_ALLOC_SIZE(...) __attribute__((__alloc_size__(__VA_ARGS__)))
+#endif
 
-extern void* memalign(size_t alignment, size_t byte_count) __mallocfunc __wur __attribute__((alloc_size(2)));
-extern size_t malloc_usable_size(const void* p);
+void* malloc(size_t __byte_count) __mallocfunc __BIONIC_ALLOC_SIZE(1) __wur;
+void* calloc(size_t __item_count, size_t __item_size) __mallocfunc __BIONIC_ALLOC_SIZE(1,2) __wur;
+void* realloc(void* __ptr, size_t __byte_count) __BIONIC_ALLOC_SIZE(2) __wur;
+void free(void* __ptr);
+
+void* memalign(size_t __alignment, size_t __byte_count) __mallocfunc __BIONIC_ALLOC_SIZE(2) __wur;
+
+#if __ANDROID_API__ >= 17
+size_t malloc_usable_size(const void* __ptr) __INTRODUCED_IN(17);
+#endif /* __ANDROID_API__ >= 17 */
+
 
 #ifndef STRUCT_MALLINFO_DECLARED
 #define STRUCT_MALLINFO_DECLARED 1
@@ -51,7 +58,40 @@ struct mallinfo {
 };
 #endif  /* STRUCT_MALLINFO_DECLARED */
 
-extern struct mallinfo mallinfo(void);
+struct mallinfo mallinfo(void);
+
+/*
+ * XML structure for malloc_info(3) is in the following format:
+ *
+ * <malloc version="jemalloc-1">
+ *   <heap nr="INT">
+ *     <allocated-large>INT</allocated-large>
+ *     <allocated-huge>INT</allocated-huge>
+ *     <allocated-bins>INT</allocated-bins>
+ *     <bins-total>INT</bins-total>
+ *     <bin nr="INT">
+ *       <allocated>INT</allocated>
+ *       <nmalloc>INT</nmalloc>
+ *       <ndalloc>INT</ndalloc>
+ *     </bin>
+ *     <!-- more bins -->
+ *   </heap>
+ *   <!-- more heaps -->
+ * </malloc>
+ */
+
+#if __ANDROID_API__ >= 23
+int malloc_info(int __must_be_zero, FILE* __fp) __INTRODUCED_IN(23);
+#endif /* __ANDROID_API__ >= 23 */
+
+
+/* mallopt options */
+#define M_DECAY_TIME -100
+
+#if __ANDROID_API__ >= 26
+int mallopt(int __option, int __value) __INTRODUCED_IN(26);
+#endif /* __ANDROID_API__ >= 26 */
+
 
 __END_DECLS
 

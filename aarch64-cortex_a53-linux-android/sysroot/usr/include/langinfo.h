@@ -94,8 +94,8 @@ __BEGIN_DECLS
 
 
 #if __ANDROID_API__ >= 26
-char* nl_langinfo(nl_item) __INTRODUCED_IN(26);
-char* nl_langinfo_l(nl_item, locale_t) __INTRODUCED_IN(26);
+char* nl_langinfo(nl_item __item) __INTRODUCED_IN(26);
+char* nl_langinfo_l(nl_item __item, locale_t __l) __INTRODUCED_IN(26);
 #endif /* __ANDROID_API__ >= 26 */
 
 

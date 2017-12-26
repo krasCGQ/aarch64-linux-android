@@ -27,14 +27,13 @@
 #ifndef _NDK_MEDIA_DRM_H
 #define _NDK_MEDIA_DRM_H
 
+#include <stdbool.h>
+#include <stdint.h>
+#include <sys/cdefs.h>
+
 #include "NdkMediaError.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#include <stdint.h>
-#include <stdbool.h>
+__BEGIN_DECLS
 
 struct AMediaDrm;
 typedef struct AMediaDrm AMediaDrm;
@@ -48,7 +47,6 @@ typedef AMediaDrmByteArray AMediaDrmSessionId;
 typedef AMediaDrmByteArray AMediaDrmScope;
 typedef AMediaDrmByteArray AMediaDrmKeySetId;
 typedef AMediaDrmByteArray AMediaDrmSecureStop;
-
 
 typedef enum AMediaDrmEventType {
     /**
@@ -80,6 +78,7 @@ typedef enum AMediaDrmEventType {
 typedef void (*AMediaDrmEventListener)(AMediaDrm *, const AMediaDrmSessionId *sessionId,
         AMediaDrmEventType eventType, int extra, const uint8_t *data, size_t dataSize);
 
+#if __ANDROID_API__ >= 21
 
 /**
  * Query if the given scheme identified by its UUID is supported on this device, and
@@ -156,8 +155,7 @@ typedef struct AMediaDrmKeyValuePair {
  * to obtain or release keys used to decrypt encrypted content.
  * AMediaDrm_getKeyRequest is used to obtain an opaque key request byte array that
  * is delivered to the license server.  The opaque key request byte array is
- * returned in KeyRequest.data.  The recommended URL to deliver the key request to
- * is returned in KeyRequest.defaultUrl.
+ * returned in KeyRequest.data.
  *
  * After the app has received the key request response from the server,
  * it should deliver to the response to the DRM engine plugin using the method
@@ -448,8 +446,8 @@ media_status_t AMediaDrm_verify(AMediaDrm *, const AMediaDrmSessionId *sessionId
         const char *macAlgorithm, uint8_t *keyId, const uint8_t *message, size_t messageSize,
         const uint8_t *signature, size_t signatureSize);
 
-#ifdef __cplusplus
-} // extern "C"
-#endif
+#endif /* __ANDROID_API__ >= 21 */
+
+__END_DECLS
 
 #endif //_NDK_MEDIA_DRM_H

@@ -30,10 +30,10 @@
 #define _SYS_SELECT_H_
 
 #include <sys/cdefs.h>
-#include <sys/time.h>
 #include <sys/types.h>
+
+#include <linux/time.h>
 #include <signal.h>
-#include <string.h>
 
 __BEGIN_DECLS
 
@@ -47,14 +47,26 @@ typedef struct {
 
 #define __FDELT(fd) ((fd) / NFDBITS)
 #define __FDMASK(fd) (1UL << ((fd) % NFDBITS))
-#define __FDS_BITS(set) (((fd_set*)(set))->fds_bits)
+#define __FDS_BITS(set) (__BIONIC_CAST(static_cast, fd_set*, set)->fds_bits)
 
-#define FD_ZERO(set) (memset(set, 0, sizeof(*(fd_set*)(set))))
+/* Inline loop so we don't have to declare memset. */
+#define FD_ZERO(set) \
+  do { \
+    size_t __i; \
+    for (__i = 0; __i < __FDSET_LONGS; ++__i) { \
+      (set)->fds_bits[__i] = 0; \
+    } \
+  } while (0)
 
-#if defined(__BIONIC_FORTIFY)
-extern void __FD_CLR_chk(int, fd_set*, size_t);
-extern void __FD_SET_chk(int, fd_set*, size_t);
-extern int  __FD_ISSET_chk(int, fd_set*, size_t);
+
+#if __ANDROID_API__ >= 21
+void __FD_CLR_chk(int, fd_set*, size_t) __INTRODUCED_IN(21);
+void __FD_SET_chk(int, fd_set*, size_t) __INTRODUCED_IN(21);
+int __FD_ISSET_chk(int, fd_set*, size_t) __INTRODUCED_IN(21);
+#endif /* __ANDROID_API__ >= 21 */
+
+
+#if defined(__BIONIC_FORTIFY) && __ANDROID_API__ >= __ANDROID_API_L__
 #define FD_CLR(fd, set) __FD_CLR_chk(fd, set, __bos(set))
 #define FD_SET(fd, set) __FD_SET_chk(fd, set, __bos(set))
 #define FD_ISSET(fd, set) __FD_ISSET_chk(fd, set, __bos(set))
@@ -62,11 +74,11 @@ extern int  __FD_ISSET_chk(int, fd_set*, size_t);
 #define FD_CLR(fd, set) (__FDS_BITS(set)[__FDELT(fd)] &= ~__FDMASK(fd))
 #define FD_SET(fd, set) (__FDS_BITS(set)[__FDELT(fd)] |= __FDMASK(fd))
 #define FD_ISSET(fd, set) ((__FDS_BITS(set)[__FDELT(fd)] & __FDMASK(fd)) != 0)
-#endif /* defined(__BIONIC_FORTIFY) */
+#endif /* defined(__BIONIC_FORTIFY) && __ANDROID_API >= 21 */
 
-extern int select(int, fd_set*, fd_set*, fd_set*, struct timeval*);
-extern int pselect(int, fd_set*, fd_set*, fd_set*, const struct timespec*, const sigset_t*);
+int select(int __fd_count, fd_set* __read_fds, fd_set* __write_fds, fd_set* __exception_fds, struct timeval* __timeout);
+int pselect(int __fd_count, fd_set* __read_fds, fd_set* __write_fds, fd_set* __exception_fds, const struct timespec* __timeout, const sigset_t* __mask);
 
 __END_DECLS
 
-#endif /* _SYS_SELECT_H_ */
+#endif

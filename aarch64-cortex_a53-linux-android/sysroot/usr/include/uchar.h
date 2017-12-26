@@ -29,12 +29,13 @@
 #ifndef _UCHAR_H_
 #define _UCHAR_H_
 
+#include <stddef.h>
 #include <sys/cdefs.h>
-#include <wchar.h>
+#include <bits/mbstate_t.h>
 
 __BEGIN_DECLS
 
-#if __STDC_VERSION__ >= 201112L && !defined(__cplusplus)
+#if !defined(__cplusplus)
 typedef __CHAR16_TYPE__ char16_t;
 typedef __CHAR32_TYPE__ char32_t;
 #endif
@@ -42,17 +43,15 @@ typedef __CHAR32_TYPE__ char32_t;
 #define __STD_UTF_16__ 1
 #define __STD_UTF_32__ 1
 
-size_t c16rtomb(char* __restrict, char16_t, mbstate_t* __restrict);
-size_t c32rtomb(char* __restrict, char32_t, mbstate_t* __restrict);
-size_t mbrtoc16(char16_t* __restrict,
-                const char* __restrict,
-                size_t,
-                mbstate_t* __restrict);
-size_t mbrtoc32(char32_t* __restrict,
-                const char* __restrict,
-                size_t,
-                mbstate_t* __restrict);
+
+#if __ANDROID_API__ >= 21
+size_t c16rtomb(char* __buf, char16_t __ch16, mbstate_t* __ps) __INTRODUCED_IN(21);
+size_t c32rtomb(char* __buf, char32_t __ch32, mbstate_t* __ps) __INTRODUCED_IN(21);
+size_t mbrtoc16(char16_t* __ch16, const char* __s, size_t __n, mbstate_t* __ps) __INTRODUCED_IN(21);
+size_t mbrtoc32(char32_t* __ch32, const char* __s, size_t __n, mbstate_t* __ps) __INTRODUCED_IN(21);
+#endif /* __ANDROID_API__ >= 21 */
+
 
 __END_DECLS
 
-#endif /* _UCHAR_H_ */
+#endif

@@ -29,12 +29,13 @@
 #ifndef _SIGNAL_H_
 #define _SIGNAL_H_
 
-#include <errno.h>
 #include <sys/cdefs.h>
-#include <limits.h>		/* For LONG_BIT */
-#include <string.h>		/* For memset() */
 #include <sys/types.h>
+
 #include <asm/sigcontext.h>
+#include <bits/pthread_types.h>
+#include <bits/timespec.h>
+#include <limits.h>
 
 #if defined(__LP64__) || defined(__mips__)
 /* For 64-bit (and mips), the kernel's struct sigaction doesn't match the POSIX one,
@@ -64,14 +65,23 @@ typedef int sig_atomic_t;
 #define _NSIG (_KERNEL__NSIG + 1)
 #define NSIG _NSIG
 
+/* The kernel headers define SIG_DFL (0) and SIG_IGN (1) but not SIG_HOLD, since
+ * SIG_HOLD is only used by the deprecated SysV signal API.
+ */
+#define SIG_HOLD __BIONIC_CAST(reinterpret_cast, sighandler_t, 2)
+
 /* We take a few real-time signals for ourselves. May as well use the same names as glibc. */
 #define SIGRTMIN (__libc_current_sigrtmin())
 #define SIGRTMAX (__libc_current_sigrtmax())
-extern int __libc_current_sigrtmin(void);
-extern int __libc_current_sigrtmax(void);
 
-extern const char* const sys_siglist[];
-extern const char* const sys_signame[]; /* BSD compatibility. */
+#if __ANDROID_API__ >= 21
+int __libc_current_sigrtmin(void) __INTRODUCED_IN(21);
+int __libc_current_sigrtmax(void) __INTRODUCED_IN(21);
+#endif /* __ANDROID_API__ >= 21 */
+
+
+extern const char* const sys_siglist[_NSIG];
+extern const char* const sys_signame[_NSIG]; /* BSD compatibility. */
 
 typedef __sighandler_t sig_t; /* BSD compatibility. */
 typedef __sighandler_t sighandler_t; /* glibc compatibility. */
@@ -103,32 +113,74 @@ struct sigaction {
 
 #endif
 
-extern int sigaction(int, const struct sigaction*, struct sigaction*);
+int sigaction(int __signal, const struct sigaction* __new_action, struct sigaction* __old_action);
 
-extern sighandler_t signal(int, sighandler_t);
+int siginterrupt(int __signal, int __flag);
 
-extern int siginterrupt(int, int);
+#if __ANDROID_API__ >= __ANDROID_API_L__
+sighandler_t signal(int __signal, sighandler_t __handler) __INTRODUCED_IN(21);
+int sigaddset(sigset_t* __set, int __signal) __INTRODUCED_IN(21);
+int sigdelset(sigset_t* __set, int __signal) __INTRODUCED_IN(21);
+int sigemptyset(sigset_t* __set) __INTRODUCED_IN(21);
+int sigfillset(sigset_t* __set) __INTRODUCED_IN(21);
+int sigismember(const sigset_t* __set, int __signal) __INTRODUCED_IN(21);
+#else
+// Implemented as static inlines before 21.
+#endif
 
-extern int sigaddset(sigset_t*, int);
-extern int sigdelset(sigset_t*, int);
-extern int sigemptyset(sigset_t*);
-extern int sigfillset(sigset_t*);
-extern int sigismember(const sigset_t*, int);
+int sigpending(sigset_t* __set);
+int sigprocmask(int __how, const sigset_t* __new_set, sigset_t* __old_set);
+int sigsuspend(const sigset_t* __mask);
+int sigwait(const sigset_t* __set, int* __signal);
 
-extern int sigpending(sigset_t*) __nonnull((1));
-extern int sigprocmask(int, const sigset_t*, sigset_t*);
-extern int sigsuspend(const sigset_t*) __nonnull((1));
-extern int sigwait(const sigset_t*, int*) __nonnull((1, 2));
 
-extern int raise(int);
-extern int kill(pid_t, int);
-extern int killpg(int, int);
+#if __ANDROID_API__ >= 26
+int sighold(int __signal)
+  __attribute__((deprecated("use sigprocmask() or pthread_sigmask() instead")))
+  __INTRODUCED_IN(26);
+int sigignore(int __signal)
+  __attribute__((deprecated("use sigaction() instead"))) __INTRODUCED_IN(26);
+int sigpause(int __signal)
+  __attribute__((deprecated("use sigsuspend() instead"))) __INTRODUCED_IN(26);
+int sigrelse(int __signal)
+  __attribute__((deprecated("use sigprocmask() or pthread_sigmask() instead")))
+  __INTRODUCED_IN(26);
+sighandler_t sigset(int __signal, sighandler_t __handler)
+  __attribute__((deprecated("use sigaction() instead"))) __INTRODUCED_IN(26);
+#endif /* __ANDROID_API__ >= 26 */
 
-extern int sigaltstack(const stack_t*, stack_t*);
 
-extern void psiginfo(const siginfo_t*, const char*);
-extern void psignal(int, const char*);
+int raise(int __signal);
+int kill(pid_t __pid, int __signal);
+int killpg(int __pgrp, int __signal);
+
+#if (!defined(__LP64__) && __ANDROID_API__ >= 16) || (defined(__LP64__))
+int tgkill(int __tgid, int __tid, int __signal) __INTRODUCED_IN_32(16);
+#endif /* (!defined(__LP64__) && __ANDROID_API__ >= 16) || (defined(__LP64__)) */
+
+
+int sigaltstack(const stack_t* __new_signal_stack, stack_t* __old_signal_stack);
+
+
+#if __ANDROID_API__ >= 17
+void psiginfo(const siginfo_t* __info, const char* __msg) __INTRODUCED_IN(17);
+void psignal(int __signal, const char* __msg) __INTRODUCED_IN(17);
+#endif /* __ANDROID_API__ >= 17 */
+
+
+int pthread_kill(pthread_t __pthread, int __signal);
+int pthread_sigmask(int __how, const sigset_t* __new_set, sigset_t* __old_set);
+
+
+#if __ANDROID_API__ >= 23
+int sigqueue(pid_t __pid, int __signal, const union sigval __value) __INTRODUCED_IN(23);
+int sigtimedwait(const sigset_t* __set, siginfo_t* __info, const struct timespec* __timeout) __INTRODUCED_IN(23);
+int sigwaitinfo(const sigset_t* __set, siginfo_t* __info) __INTRODUCED_IN(23);
+#endif /* __ANDROID_API__ >= 23 */
+
 
 __END_DECLS
+
+#include <android/legacy_signal_inlines.h>
 
 #endif /* _SIGNAL_H_ */

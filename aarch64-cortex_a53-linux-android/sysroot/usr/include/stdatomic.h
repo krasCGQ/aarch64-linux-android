@@ -32,16 +32,13 @@
 
 #include <sys/cdefs.h>
 
-
 #if defined(__cplusplus) && __cplusplus >= 201103L && defined(_USING_LIBCXX)
 # ifdef __clang__
 #  if __has_feature(cxx_atomic)
 #   define _STDATOMIC_HAVE_ATOMIC
 #  endif
 # else /* gcc */
-#  if __GNUC_PREREQ(4, 7)
-#   define _STDATOMIC_HAVE_ATOMIC
-#  endif
+#  define _STDATOMIC_HAVE_ATOMIC
 # endif
 #endif
 
@@ -144,11 +141,15 @@ using std::atomic_uintmax_t;
  * bits as a T.
  */
 
-#include <stddef.h>  /* For ptrdiff_t.                          */
-#include <stdint.h>  /* TODO: Should pollute namespace less.    */
+#include <stddef.h>  /* For ptrdiff_t. */
+#include <stdint.h>  /* TODO: don't drag in all the macros, just the types. */
+// Include uchar.h only when needed.  Bionic's stdatomic.h is also used for the
+// host (via a copy in prebuilts/clang) and uchar.h is not available in the
+// glibc used for the host.
 #if __STDC_VERSION__ >= 201112L
 # include <uchar.h>  /* For char16_t and char32_t.              */
 #endif
+
 
 #ifdef __clang__
 # if __has_extension(c_atomic) || __has_extension(cxx_atomic)
@@ -160,14 +161,7 @@ using std::atomic_uintmax_t;
 #  define __HAS_BUILTIN_SYNC_SWAP
 # endif
 #else
-# if __GNUC_PREREQ(4, 7)
-#  define	__GNUC_ATOMICS
-# else
-#  define	__SYNC_ATOMICS
-#  ifdef __cplusplus
-#   define       __ATOMICS_AVOID_DOT_INIT
-#  endif
-# endif
+# define __GNUC_ATOMICS
 #endif
 
 /*
@@ -176,53 +170,33 @@ using std::atomic_uintmax_t;
 
 #ifdef __GCC_ATOMIC_BOOL_LOCK_FREE
 #define	ATOMIC_BOOL_LOCK_FREE		__GCC_ATOMIC_BOOL_LOCK_FREE
-#elif defined(__SYNC_ATOMICS)
-#define	ATOMIC_BOOL_LOCK_FREE           2 /* For all modern platforms */
 #endif
 #ifdef __GCC_ATOMIC_CHAR_LOCK_FREE
 #define	ATOMIC_CHAR_LOCK_FREE		__GCC_ATOMIC_CHAR_LOCK_FREE
-#elif defined(__SYNC_ATOMICS)
-#define	ATOMIC_CHAR_LOCK_FREE           2
 #endif
 #ifdef __GCC_ATOMIC_CHAR16_T_LOCK_FREE
 #define	ATOMIC_CHAR16_T_LOCK_FREE	__GCC_ATOMIC_CHAR16_T_LOCK_FREE
-#elif defined(__SYNC_ATOMICS)
-#define	ATOMIC_CHAR16_T_LOCK_FREE       2
 #endif
 #ifdef __GCC_ATOMIC_CHAR32_T_LOCK_FREE
 #define	ATOMIC_CHAR32_T_LOCK_FREE	__GCC_ATOMIC_CHAR32_T_LOCK_FREE
-#elif defined(__SYNC_ATOMICS)
-#define	ATOMIC_CHAR32_T_LOCK_FREE       2
 #endif
 #ifdef __GCC_ATOMIC_WCHAR_T_LOCK_FREE
 #define	ATOMIC_WCHAR_T_LOCK_FREE	__GCC_ATOMIC_WCHAR_T_LOCK_FREE
-#elif defined(__SYNC_ATOMICS)
-#define	ATOMIC_WCHAR_T_LOCK_FREE        2
 #endif
 #ifdef __GCC_ATOMIC_SHORT_LOCK_FREE
 #define	ATOMIC_SHORT_LOCK_FREE		__GCC_ATOMIC_SHORT_LOCK_FREE
-#elif defined(__SYNC_ATOMICS)
-#define	ATOMIC_SHORT_LOCK_FREE          2
 #endif
 #ifdef __GCC_ATOMIC_INT_LOCK_FREE
 #define	ATOMIC_INT_LOCK_FREE		__GCC_ATOMIC_INT_LOCK_FREE
-#elif defined(__SYNC_ATOMICS)
-#define	ATOMIC_INT_LOCK_FREE            2
 #endif
 #ifdef __GCC_ATOMIC_LONG_LOCK_FREE
 #define	ATOMIC_LONG_LOCK_FREE		__GCC_ATOMIC_LONG_LOCK_FREE
-#elif defined(__SYNC_ATOMICS)
-#define	ATOMIC_LONG_LOCK_FREE           2
 #endif
 #ifdef __GCC_ATOMIC_LLONG_LOCK_FREE
 #define	ATOMIC_LLONG_LOCK_FREE		__GCC_ATOMIC_LLONG_LOCK_FREE
-#elif defined(__SYNC_ATOMICS)
-#define	ATOMIC_LLONG_LOCK_FREE          1 /* maybe */
 #endif
 #ifdef __GCC_ATOMIC_POINTER_LOCK_FREE
 #define	ATOMIC_POINTER_LOCK_FREE	__GCC_ATOMIC_POINTER_LOCK_FREE
-#elif defined(__SYNC_ATOMICS)
-#define	ATOMIC_POINTER_LOCK_FREE        2
 #endif
 
 /*
@@ -233,11 +207,7 @@ using std::atomic_uintmax_t;
 #define	ATOMIC_VAR_INIT(value)		(value)
 #define	atomic_init(obj, value)		__c11_atomic_init(obj, value)
 #else
-#ifdef __ATOMICS_AVOID_DOT_INIT
-#define	ATOMIC_VAR_INIT(value)		{ value }
-#else
 #define	ATOMIC_VAR_INIT(value)		{ .__val = (value) }
-#endif
 #define	atomic_init(obj, value)		((void)((obj)->__val = (value)))
 #endif
 

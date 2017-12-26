@@ -25,6 +25,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+
 #ifndef _SEMAPHORE_H
 #define _SEMAPHORE_H
 
@@ -32,30 +33,30 @@
 
 __BEGIN_DECLS
 
+struct timespec;
+
 typedef struct {
-  volatile unsigned int count;
+  unsigned int count;
 #ifdef __LP64__
   int __reserved[3];
 #endif
 } sem_t;
 
-#define SEM_FAILED NULL
+#define SEM_FAILED __BIONIC_CAST(reinterpret_cast, sem_t*, 0)
 
-extern int sem_init(sem_t *sem, int pshared, unsigned int value);
+int sem_destroy(sem_t* __sem);
+int sem_getvalue(sem_t* __sem, int* __value);
+int sem_init(sem_t* __sem, int __shared, unsigned int __value);
+int sem_post(sem_t* __sem);
+int sem_timedwait(sem_t* __sem, const struct timespec* __ts);
+int sem_trywait(sem_t* __sem);
+int sem_wait(sem_t* __sem);
 
-extern int    sem_close(sem_t *);
-extern int    sem_destroy(sem_t *);
-extern int    sem_getvalue(sem_t *, int *);
-extern int    sem_init(sem_t *, int, unsigned int);
-extern sem_t *sem_open(const char *, int, ...);
-extern int    sem_post(sem_t *);
-extern int    sem_trywait(sem_t *);
-extern int    sem_unlink(const char *);
-extern int    sem_wait(sem_t *);
-
-struct timespec;
-extern int    sem_timedwait(sem_t *sem, const struct timespec *abs_timeout);
+/* These aren't actually implemented. */
+sem_t* sem_open(const char* __name, int _flags, ...);
+int sem_close(sem_t* __sem);
+int sem_unlink(const char* __name);
 
 __END_DECLS
 
-#endif /* _SEMAPHORE_H */
+#endif

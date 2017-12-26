@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 The Android Open Source Project
+ * Copyright (C) 2016 The Android Open Source Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,6 +29,28 @@
 #ifndef _SYS_SHM_H_
 #define _SYS_SHM_H_
 
+#include <sys/cdefs.h>
+#include <sys/ipc.h>
+#include <sys/types.h>
+
 #include <linux/shm.h>
 
-#endif /* _SYS_SHM_H_ */
+#define shmid_ds shmid64_ds
+#define SHMLBA 4096
+
+__BEGIN_DECLS
+
+typedef unsigned long shmatt_t;
+
+
+#if __ANDROID_API__ >= 26
+void* shmat(int __shm_id, const void* __addr, int __flags) __INTRODUCED_IN(26);
+int shmctl(int __shm_id, int __cmd, struct shmid_ds* __buf) __INTRODUCED_IN(26);
+int shmdt(const void* __addr) __INTRODUCED_IN(26);
+int shmget(key_t __key, size_t __size, int __flags) __INTRODUCED_IN(26);
+#endif /* __ANDROID_API__ >= 26 */
+
+
+__END_DECLS
+
+#endif

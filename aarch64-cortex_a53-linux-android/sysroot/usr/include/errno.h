@@ -25,6 +25,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+
 #ifndef _ERRNO_H
 #define _ERRNO_H
 
@@ -33,19 +34,16 @@
 
 __BEGIN_DECLS
 
-/* on Linux, ENOTSUP and EOPNOTSUPP are defined as the same error code
- * even if 1000.3 states that they should be different
- */
-#ifndef  ENOTSUP
-#define  ENOTSUP  EOPNOTSUPP
+/* On Linux, ENOTSUP and EOPNOTSUPP are the same despite POSIX saying they should be distinct. */
+#ifndef ENOTSUP
+#define ENOTSUP EOPNOTSUPP
 #endif
 
-/* internal function returning the address of the thread-specific errno */
-extern volatile int* __errno(void) __pure2;
-
-/* a macro expanding to the errno l-value */
-#define  errno   (*__errno())
+int* __errno(void) __attribute_const__;
+#define errno (*__errno())
 
 __END_DECLS
+
+#include <android/legacy_errno_inlines.h>
 
 #endif /* _ERRNO_H */

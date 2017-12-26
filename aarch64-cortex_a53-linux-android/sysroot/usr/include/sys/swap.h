@@ -38,9 +38,13 @@ __BEGIN_DECLS
 #define SWAP_FLAG_PRIO_MASK 0x7fff
 #define SWAP_FLAG_PRIO_SHIFT 0
 
-extern int swapon(const char*, int) __nonnull((1));
-extern int swapoff(const char*) __nonnull((1));
+
+#if __ANDROID_API__ >= 19
+int swapon(const char* __path,  int __flags) __INTRODUCED_IN(19);
+int swapoff(const char* __path) __INTRODUCED_IN(19);
+#endif /* __ANDROID_API__ >= 19 */
+
 
 __END_DECLS
 
-#endif /* _SYS_SWAP_H_ */
+#endif

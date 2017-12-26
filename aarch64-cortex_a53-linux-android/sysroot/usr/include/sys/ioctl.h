@@ -25,6 +25,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+
 #ifndef _SYS_IOCTL_H_
 #define _SYS_IOCTL_H_
 
@@ -37,13 +38,8 @@
 #include <linux/termios.h>
 #include <asm/ioctls.h>
 #include <asm/termbits.h>
-#include <sys/ioctl_compat.h>
 #include <linux/tty.h>
 
-__BEGIN_DECLS
+#include <bits/ioctl.h>
 
-extern int ioctl(int, int, ...);
-
-__END_DECLS
-
-#endif /* _SYS_IOCTL_H_ */
+#endif

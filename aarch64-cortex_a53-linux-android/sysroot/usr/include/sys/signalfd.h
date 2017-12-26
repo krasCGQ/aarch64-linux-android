@@ -29,14 +29,19 @@
 #ifndef _SYS_SIGNALFD_H_
 #define _SYS_SIGNALFD_H_
 
+#include <sys/cdefs.h>
+
 #include <linux/signalfd.h>
 #include <signal.h>
-#include <sys/cdefs.h>
 
 __BEGIN_DECLS
 
-extern int signalfd(int fd, const sigset_t* mask, int flags) __nonnull((2));
+
+#if __ANDROID_API__ >= 18
+int signalfd(int __fd, const sigset_t* __mask, int __flags) __INTRODUCED_IN(18);
+#endif /* __ANDROID_API__ >= 18 */
+
 
 __END_DECLS
 
-#endif /* _SYS_SIGNALFD_H */
+#endif

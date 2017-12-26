@@ -42,7 +42,7 @@ __BEGIN_DECLS
 
 
 #if __ANDROID_API__ >= 26
-int quotactl(int, const char*, int, char*) __INTRODUCED_IN(26);
+int quotactl(int __cmd, const char* __special, int __id, char* __addr) __INTRODUCED_IN(26);
 #endif /* __ANDROID_API__ >= 26 */
 
 

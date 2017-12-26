@@ -25,9 +25,38 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+
 #ifndef ANDROID_API_LEVEL_H
 #define ANDROID_API_LEVEL_H
 
-#define __ANDROID_API__ 22
+#include <sys/cdefs.h>
+
+/*
+ * Magic version number for a current development build, which has
+ * not yet turned into an official release.
+ */
+#ifndef __ANDROID_API_FUTURE__
+#define __ANDROID_API_FUTURE__ 10000
+#endif
+
+#ifndef __ANDROID_API__
+#define __ANDROID_API__ __ANDROID_API_FUTURE__
+#else
+#define __ANDROID_NDK__ 1
+#endif
+
+#define __ANDROID_API_G__ 9
+#define __ANDROID_API_I__ 14
+#define __ANDROID_API_J__ 16
+#define __ANDROID_API_J_MR1__ 17
+#define __ANDROID_API_J_MR2__ 18
+#define __ANDROID_API_K__ 19
+#define __ANDROID_API_L__ 21
+#define __ANDROID_API_L_MR1__ 22
+#define __ANDROID_API_M__ 23
+#define __ANDROID_API_N__ 24
+#define __ANDROID_API_N_MR1__ 25
+#define __ANDROID_API_O__ 26
+#define __ANDROID_API_O_MR1__ 27
 
 #endif /* ANDROID_API_LEVEL_H */

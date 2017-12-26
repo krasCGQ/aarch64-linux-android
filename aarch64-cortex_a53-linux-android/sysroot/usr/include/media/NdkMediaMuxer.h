@@ -28,15 +28,14 @@
 #ifndef _NDK_MEDIA_MUXER_H
 #define _NDK_MEDIA_MUXER_H
 
+#include <sys/cdefs.h>
 #include <sys/types.h>
 
 #include "NdkMediaCodec.h"
 #include "NdkMediaError.h"
 #include "NdkMediaFormat.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+__BEGIN_DECLS
 
 struct AMediaMuxer;
 typedef struct AMediaMuxer AMediaMuxer;
@@ -45,6 +44,8 @@ typedef enum {
     AMEDIAMUXER_OUTPUT_FORMAT_MPEG_4 = 0,
     AMEDIAMUXER_OUTPUT_FORMAT_WEBM   = 1,
 } OutputFormat;
+
+#if __ANDROID_API__ >= 21
 
 /**
  * Create new media muxer
@@ -112,8 +113,8 @@ media_status_t AMediaMuxer_stop(AMediaMuxer*);
 media_status_t AMediaMuxer_writeSampleData(AMediaMuxer *muxer,
         size_t trackIdx, const uint8_t *data, const AMediaCodecBufferInfo *info);
 
-#ifdef __cplusplus
-} // extern "C"
-#endif
+#endif /* __ANDROID_API__ >= 21 */
+
+__END_DECLS
 
 #endif // _NDK_MEDIA_MUXER_H

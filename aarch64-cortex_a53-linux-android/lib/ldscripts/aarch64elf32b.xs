@@ -7,7 +7,7 @@ OUTPUT_FORMAT("elf32-bigaarch64", "elf32-bigaarch64",
 	      "elf32-littleaarch64")
 OUTPUT_ARCH(aarch64:ilp32)
 ENTRY(_start)
-SEARCH_DIR("=/home/aryan/KudProject/src/tc/out/aarch64-cortex_a53-linux-android/aarch64-cortex_a53-linux-android/lib");
+SEARCH_DIR("=/home/krasCGQ/toolchain/out/aarch64-cortex_a53-linux-android/aarch64-cortex_a53-linux-android/lib");
 SECTIONS
 {
   /* Read-only sections, merged into text segment: */

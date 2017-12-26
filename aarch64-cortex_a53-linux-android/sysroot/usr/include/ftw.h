@@ -25,8 +25,9 @@
 #ifndef	_FTW_H
 #define	_FTW_H
 
-#include <sys/types.h>
+#include <sys/cdefs.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 
 /*
  * Valid flags for the 3rd argument to the function that is passed as the
@@ -54,12 +55,20 @@ struct FTW {
 };
 
 __BEGIN_DECLS
-int	ftw(const char *, int (*)(const char *, const struct stat *, int), int);
-int	nftw(const char *, int (*)(const char *, const struct stat *, int,
-	    struct FTW *), int, int);
-int	ftw64(const char *, int (*)(const char *, const struct stat64 *, int), int);
-int	nftw64(const char *, int (*)(const char *, const struct stat64 *, int,
-	    struct FTW *), int, int);
+
+#if __ANDROID_API__ >= 17
+int ftw(const char* __dir_path, int (*__callback)(const char*, const struct stat*, int), int __max_fd_count) __INTRODUCED_IN(17);
+int nftw(const char* __dir_path, int (*__callback)(const char*, const struct stat*, int, struct FTW*), int __max_fd_count, int __flags)
+  __INTRODUCED_IN(17);
+#endif /* __ANDROID_API__ >= 17 */
+
+
+#if __ANDROID_API__ >= 21
+int ftw64(const char* __dir_path, int (*__callback)(const char*, const struct stat64*, int), int __max_fd_count) __INTRODUCED_IN(21);
+int nftw64(const char* __dir_path, int (*__callback)(const char*, const struct stat64*, int, struct FTW*), int __max_fd_count, int __flags)
+  __INTRODUCED_IN(21);
+#endif /* __ANDROID_API__ >= 21 */
+
 __END_DECLS
 
-#endif	/* !_FTW_H */
+#endif

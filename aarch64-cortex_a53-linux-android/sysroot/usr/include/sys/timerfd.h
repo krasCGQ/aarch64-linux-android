@@ -31,6 +31,7 @@
 
 #include <fcntl.h> /* For O_CLOEXEC and O_NONBLOCK. */
 #include <time.h>
+#include <sys/cdefs.h>
 #include <sys/types.h>
 
 __BEGIN_DECLS
@@ -41,11 +42,14 @@ __BEGIN_DECLS
 #define TFD_CLOEXEC O_CLOEXEC
 #define TFD_NONBLOCK O_NONBLOCK
 
-extern int timerfd_create(clockid_t, int);
-extern int timerfd_settime(int, int, const struct itimerspec*,
-                           struct itimerspec*);
-extern int timerfd_gettime(int, struct itimerspec*);
+
+#if __ANDROID_API__ >= 19
+int timerfd_create(clockid_t __clock, int __flags) __INTRODUCED_IN(19);
+int timerfd_settime(int __fd, int __flags, const struct itimerspec* __new_value, struct itimerspec* __old_value) __INTRODUCED_IN(19);
+int timerfd_gettime(int __fd, struct itimerspec* __current_value) __INTRODUCED_IN(19);
+#endif /* __ANDROID_API__ >= 19 */
+
 
 __END_DECLS
 
-#endif /* _SYS_TIMERFD_H */
+#endif

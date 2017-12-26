@@ -25,11 +25,12 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+
 #ifndef _SYS_UN_H_
 #define _SYS_UN_H_
 
-typedef unsigned short sa_family_t;
-
+#include <bits/sa_family_t.h>
 #include <linux/un.h>
+#include <sys/cdefs.h>
 
-#endif /* _SYS_UN_H_ */
+#endif

@@ -35,8 +35,8 @@
 
 __BEGIN_DECLS
 
-extern clock_t times(struct tms*);
+clock_t times(struct tms* __buf);
 
 __END_DECLS
 
-#endif /* _SYS_TIMES_H_ */
+#endif

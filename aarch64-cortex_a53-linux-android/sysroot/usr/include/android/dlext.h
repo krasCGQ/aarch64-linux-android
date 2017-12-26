@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2014 The Android Open Source Project
-
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,9 +17,11 @@
 #ifndef __ANDROID_DLEXT_H__
 #define __ANDROID_DLEXT_H__
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <sys/cdefs.h>
+#include <sys/types.h>  /* for off64_t */
 
 __BEGIN_DECLS
 
@@ -55,13 +57,67 @@ enum {
    */
   ANDROID_DLEXT_USE_LIBRARY_FD        = 0x10,
 
+  /* If opening a library using library_fd read it starting at library_fd_offset.
+   * This flag is only valid when ANDROID_DLEXT_USE_LIBRARY_FD is set.
+   */
+  ANDROID_DLEXT_USE_LIBRARY_FD_OFFSET    = 0x20,
+
+  /* When set, do not check if the library has already been loaded by file stat(2)s.
+   *
+   * This flag allows forced loading of the library in the case when for some
+   * reason multiple ELF files share the same filename (because the already-loaded
+   * library has been removed and overwritten, for example).
+   *
+   * Note that if the library has the same dt_soname as an old one and some other
+   * library has the soname in DT_NEEDED list, the first one will be used to resolve any
+   * dependencies.
+   */
+  ANDROID_DLEXT_FORCE_LOAD = 0x40,
+
+  /* When set, if the minimum p_vaddr of the ELF file's PT_LOAD segments is non-zero,
+   * the dynamic linker will load it at that address.
+   *
+   * This flag is for ART internal use only.
+   */
+  ANDROID_DLEXT_FORCE_FIXED_VADDR = 0x80,
+
+  /* Instructs dlopen to load the library at the address specified by reserved_addr.
+   *
+   * The difference between ANDROID_DLEXT_LOAD_AT_FIXED_ADDRESS and ANDROID_DLEXT_RESERVED_ADDRESS
+   * is that for ANDROID_DLEXT_LOAD_AT_FIXED_ADDRESS the linker reserves memory at reserved_addr
+   * whereas for ANDROID_DLEXT_RESERVED_ADDRESS the linker relies on the caller to reserve the memory.
+   *
+   * This flag can be used with ANDROID_DLEXT_FORCE_FIXED_VADDR; when ANDROID_DLEXT_FORCE_FIXED_VADDR
+   * is set and load_bias is not 0 (load_bias is min(p_vaddr) of PT_LOAD segments) this flag is ignored.
+   * This is implemented this way because the linker has to pick one address over the other and this
+   * way is more convenient for art. Note that ANDROID_DLEXT_FORCE_FIXED_VADDR does not generate
+   * an error when min(p_vaddr) is 0.
+   *
+   * Cannot be used with ANDROID_DLEXT_RESERVED_ADDRESS or ANDROID_DLEXT_RESERVED_ADDRESS_HINT.
+   *
+   * This flag is for ART internal use only.
+   */
+  ANDROID_DLEXT_LOAD_AT_FIXED_ADDRESS = 0x100,
+
+  /* This flag used to load library in a different namespace. The namespace is
+   * specified in library_namespace.
+   */
+  ANDROID_DLEXT_USE_NAMESPACE = 0x200,
+
   /* Mask of valid bits */
   ANDROID_DLEXT_VALID_FLAG_BITS       = ANDROID_DLEXT_RESERVED_ADDRESS |
                                         ANDROID_DLEXT_RESERVED_ADDRESS_HINT |
                                         ANDROID_DLEXT_WRITE_RELRO |
                                         ANDROID_DLEXT_USE_RELRO |
-                                        ANDROID_DLEXT_USE_LIBRARY_FD,
+                                        ANDROID_DLEXT_USE_LIBRARY_FD |
+                                        ANDROID_DLEXT_USE_LIBRARY_FD_OFFSET |
+                                        ANDROID_DLEXT_FORCE_LOAD |
+                                        ANDROID_DLEXT_FORCE_FIXED_VADDR |
+                                        ANDROID_DLEXT_LOAD_AT_FIXED_ADDRESS |
+                                        ANDROID_DLEXT_USE_NAMESPACE,
 };
+
+struct android_namespace_t;
 
 typedef struct {
   uint64_t flags;
@@ -69,9 +125,16 @@ typedef struct {
   size_t  reserved_size;
   int     relro_fd;
   int     library_fd;
+  off64_t library_fd_offset;
+  struct android_namespace_t* library_namespace;
 } android_dlextinfo;
 
-extern void* android_dlopen_ext(const char* filename, int flag, const android_dlextinfo* extinfo);
+
+#if __ANDROID_API__ >= 21
+void* android_dlopen_ext(const char* __filename, int __flags, const android_dlextinfo* __info)
+  __INTRODUCED_IN(21);
+#endif /* __ANDROID_API__ >= 21 */
+
 
 __END_DECLS
 

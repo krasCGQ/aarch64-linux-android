@@ -17,14 +17,14 @@
 #ifndef OPENSL_ES_ANDROID_H_
 #define OPENSL_ES_ANDROID_H_
 
+#include "OpenSLES.h"
 #include "OpenSLES_AndroidConfiguration.h"
 #include "OpenSLES_AndroidMetadata.h"
+#include <jni.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#include "OpenSLES.h"
 
 /*---------------------------------------------------------------------------*/
 /* Android common types                                                      */
@@ -55,6 +55,28 @@ typedef struct SLAndroidDataFormat_PCM_EX_ {
     SLuint32         endianness;
     SLuint32         representation;
 } SLAndroidDataFormat_PCM_EX;
+
+#define SL_ANDROID_SPEAKER_NON_POSITIONAL       ((SLuint32) 0x80000000)
+
+// Make an indexed channel mask from a bitfield.
+//
+// Each bit in the bitfield corresponds to a channel index,
+// from least-significant bit (channel 0) up to the bit
+// corresponding to the maximum channel count (currently FCC_8).
+// A '1' in the bitfield indicates that the channel should be
+// included in the stream, while a '0' indicates that it
+// should be excluded. For instance, a bitfield of 0x0A (binary 00001010)
+// would define a stream that contains channels 1 and 3. (The corresponding
+// indexed mask, after setting the SL_ANDROID_NON_POSITIONAL bit,
+// would be 0x8000000A.)
+#define SL_ANDROID_MAKE_INDEXED_CHANNEL_MASK(bitfield) \
+        ((bitfield) | SL_ANDROID_SPEAKER_NON_POSITIONAL)
+
+// Specifying SL_ANDROID_SPEAKER_USE_DEFAULT as a channel mask in
+// SLAndroidDataFormat_PCM_EX causes OpenSL ES to assign a default
+// channel mask based on the number of channels requested. This
+// value cannot be combined with SL_ANDROID_SPEAKER_NON_POSITIONAL.
+#define SL_ANDROID_SPEAKER_USE_DEFAULT ((SLuint32)0)
 
 /*---------------------------------------------------------------------------*/
 /* Android Effect interface                                                  */
@@ -173,6 +195,11 @@ extern SL_API const SLInterfaceID SL_IID_ANDROIDCONFIGURATION;
 struct SLAndroidConfigurationItf_;
 typedef const struct SLAndroidConfigurationItf_ * const * SLAndroidConfigurationItf;
 
+/*
+ * Java Proxy Type IDs
+ */
+#define SL_ANDROID_JAVA_PROXY_ROUTING   0x0001
+
 struct SLAndroidConfigurationItf_ {
 
     SLresult (*SetConfiguration) (SLAndroidConfigurationItf self,
@@ -185,6 +212,13 @@ struct SLAndroidConfigurationItf_ {
            SLuint32 *pValueSize,
            void *pConfigValue
        );
+
+    SLresult (*AcquireJavaProxy) (SLAndroidConfigurationItf self,
+            SLuint32 proxyType,
+            jobject *pProxyObj);
+
+    SLresult (*ReleaseJavaProxy) (SLAndroidConfigurationItf self,
+            SLuint32 proxyType);
 };
 
 
@@ -340,7 +374,9 @@ typedef struct SLDataLocator_AndroidFD_ {
 /** Addendum to Data locator macros  */
 #define SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE ((SLuint32) 0x800007BD)
 
-/** BufferQueue-based data locator definition where locatorType must be SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE*/
+/** BufferQueue-based data locator definition where locatorType must
+ *  be SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE
+ */
 typedef struct SLDataLocator_AndroidSimpleBufferQueue {
 	SLuint32	locatorType;
 	SLuint32	numBuffers;
@@ -365,6 +401,64 @@ typedef struct SLDataLocator_AndroidBufferQueue_ {
  * MIME types required for data in Android Buffer Queues
  */
 #define SL_ANDROID_MIME_AACADTS            ((SLchar *) "audio/vnd.android.aac-adts")
+
+/*---------------------------------------------------------------------------*/
+/* Acoustic Echo Cancellation (AEC) Interface                                */
+/* --------------------------------------------------------------------------*/
+extern SL_API const SLInterfaceID SL_IID_ANDROIDACOUSTICECHOCANCELLATION;
+
+struct SLAndroidAcousticEchoCancellationItf_;
+typedef const struct SLAndroidAcousticEchoCancellationItf_ * const *
+        SLAndroidAcousticEchoCancellationItf;
+
+struct SLAndroidAcousticEchoCancellationItf_ {
+    SLresult (*SetEnabled)(
+        SLAndroidAcousticEchoCancellationItf self,
+        SLboolean enabled
+    );
+    SLresult (*IsEnabled)(
+        SLAndroidAcousticEchoCancellationItf self,
+        SLboolean *pEnabled
+    );
+};
+
+/*---------------------------------------------------------------------------*/
+/* Automatic Gain Control (ACC) Interface                                    */
+/* --------------------------------------------------------------------------*/
+extern SL_API const SLInterfaceID SL_IID_ANDROIDAUTOMATICGAINCONTROL;
+
+struct SLAndroidAutomaticGainControlItf_;
+typedef const struct SLAndroidAutomaticGainControlItf_ * const * SLAndroidAutomaticGainControlItf;
+
+struct SLAndroidAutomaticGainControlItf_ {
+    SLresult (*SetEnabled)(
+        SLAndroidAutomaticGainControlItf self,
+        SLboolean enabled
+    );
+    SLresult (*IsEnabled)(
+        SLAndroidAutomaticGainControlItf self,
+        SLboolean *pEnabled
+    );
+};
+
+/*---------------------------------------------------------------------------*/
+/* Noise Suppression Interface                                               */
+/* --------------------------------------------------------------------------*/
+extern SL_API const SLInterfaceID SL_IID_ANDROIDNOISESUPPRESSION;
+
+struct SLAndroidNoiseSuppressionItf_;
+typedef const struct SLAndroidNoiseSuppressionItf_ * const * SLAndroidNoiseSuppressionItf;
+
+struct SLAndroidNoiseSuppressionItf_ {
+    SLresult (*SetEnabled)(
+        SLAndroidNoiseSuppressionItf self,
+        SLboolean enabled
+    );
+    SLresult (*IsEnabled)(
+        SLAndroidNoiseSuppressionItf self,
+        SLboolean *pEnabled
+    );
+};
 
 #ifdef __cplusplus
 }
