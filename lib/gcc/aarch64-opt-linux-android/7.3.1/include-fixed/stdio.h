@@ -2,7 +2,7 @@
 
     It has been auto-edited by fixincludes from:
 
-	"/home/krasCGQ/tc/out/aarch64-opt-linux-android/aarch64-opt-linux-android/sysroot/usr/include/stdio.h"
+	"/home/krascgq/tc/out/aarch64-opt-linux-android/aarch64-opt-linux-android/sysroot/usr/include/stdio.h"
 
     This had to be done to correct non-standard usages in the
     original, manufacturer supplied header file.  */
