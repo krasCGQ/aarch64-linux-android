@@ -79,6 +79,14 @@
 #define DRM_MODE_DIRTY_ANNOTATE 2
 #define DRM_MODE_LINK_STATUS_GOOD 0
 #define DRM_MODE_LINK_STATUS_BAD 1
+#define DRM_MODE_ROTATE_0 (1 << 0)
+#define DRM_MODE_ROTATE_90 (1 << 1)
+#define DRM_MODE_ROTATE_180 (1 << 2)
+#define DRM_MODE_ROTATE_270 (1 << 3)
+#define DRM_MODE_ROTATE_MASK (DRM_MODE_ROTATE_0 | DRM_MODE_ROTATE_90 | DRM_MODE_ROTATE_180 | DRM_MODE_ROTATE_270)
+#define DRM_MODE_REFLECT_X (1 << 4)
+#define DRM_MODE_REFLECT_Y (1 << 5)
+#define DRM_MODE_REFLECT_MASK (DRM_MODE_REFLECT_X | DRM_MODE_REFLECT_Y)
 struct drm_mode_modeinfo {
   __u32 clock;
   __u16 hdisplay;
@@ -396,6 +404,21 @@ struct drm_mode_atomic {
   __u64 reserved;
   __u64 user_data;
 };
+struct drm_format_modifier_blob {
+#define FORMAT_BLOB_CURRENT 1
+  __u32 version;
+  __u32 flags;
+  __u32 count_formats;
+  __u32 formats_offset;
+  __u32 count_modifiers;
+  __u32 modifiers_offset;
+};
+struct drm_format_modifier {
+  __u64 formats;
+  __u32 offset;
+  __u32 pad;
+  __u64 modifier;
+};
 struct drm_mode_create_blob {
   __u64 data;
   __u32 length;
@@ -403,6 +426,26 @@ struct drm_mode_create_blob {
 };
 struct drm_mode_destroy_blob {
   __u32 blob_id;
+};
+struct drm_mode_create_lease {
+  __u64 object_ids;
+  __u32 object_count;
+  __u32 flags;
+  __u32 lessee_id;
+  __u32 fd;
+};
+struct drm_mode_list_lessees {
+  __u32 count_lessees;
+  __u32 pad;
+  __u64 lessees_ptr;
+};
+struct drm_mode_get_lease {
+  __u32 count_objects;
+  __u32 pad;
+  __u64 objects_ptr;
+};
+struct drm_mode_revoke_lease {
+  __u32 lessee_id;
 };
 #ifdef __cplusplus
 #endif

@@ -123,6 +123,17 @@ struct kvm_s390_skeys {
   __u32 flags;
   __u32 reserved[9];
 };
+#define KVM_S390_CMMA_PEEK (1 << 0)
+struct kvm_s390_cmma_log {
+  __u64 start_gfn;
+  __u32 count;
+  __u32 flags;
+  union {
+    __u64 remaining;
+    __u64 mask;
+  };
+  __u64 values;
+};
 struct kvm_hyperv_exit {
 #define KVM_EXIT_HYPERV_SYNIC 1
 #define KVM_EXIT_HYPERV_HCALL 2
@@ -526,7 +537,8 @@ struct kvm_ppc_one_seg_page_size {
 struct kvm_ppc_smmu_info {
   __u64 flags;
   __u32 slb_size;
-  __u32 pad;
+  __u16 data_keys;
+  __u16 instr_keys;
   struct kvm_ppc_one_seg_page_size sps[KVM_PPC_PAGE_SIZES_MAX_SZ];
 };
 struct kvm_ppc_resize_hpt {
@@ -711,6 +723,14 @@ struct kvm_ppc_resize_hpt {
 #define KVM_CAP_SPAPR_TCE_VFIO 142
 #define KVM_CAP_X86_GUEST_MWAIT 143
 #define KVM_CAP_ARM_USER_IRQ 144
+#define KVM_CAP_S390_CMMA_MIGRATION 145
+#define KVM_CAP_PPC_FWNMI 146
+#define KVM_CAP_PPC_SMT_POSSIBLE 147
+#define KVM_CAP_HYPERV_SYNIC2 148
+#define KVM_CAP_HYPERV_VP_INDEX 149
+#define KVM_CAP_S390_AIS_MIGRATION 150
+#define KVM_CAP_PPC_GET_CPU_CHAR 151
+#define KVM_CAP_S390_BPB 152
 #ifdef KVM_CAP_IRQ_ROUTING
 struct kvm_irq_routing_irqchip {
   __u32 irqchip;
@@ -949,6 +969,7 @@ struct kvm_s390_ucas_mapping {
 #define KVM_PPC_RESIZE_HPT_COMMIT _IOR(KVMIO, 0xae, struct kvm_ppc_resize_hpt)
 #define KVM_PPC_CONFIGURE_V3_MMU _IOW(KVMIO, 0xaf, struct kvm_ppc_mmuv3_cfg)
 #define KVM_PPC_GET_RMMU_INFO _IOW(KVMIO, 0xb0, struct kvm_ppc_rmmu_info)
+#define KVM_PPC_GET_CPU_CHAR _IOR(KVMIO, 0xb1, struct kvm_ppc_cpu_char)
 #define KVM_CREATE_DEVICE _IOWR(KVMIO, 0xe0, struct kvm_create_device)
 #define KVM_SET_DEVICE_ATTR _IOW(KVMIO, 0xe1, struct kvm_device_attr)
 #define KVM_GET_DEVICE_ATTR _IOW(KVMIO, 0xe2, struct kvm_device_attr)
@@ -1009,6 +1030,8 @@ struct kvm_s390_ucas_mapping {
 #define KVM_S390_SET_IRQ_STATE _IOW(KVMIO, 0xb5, struct kvm_s390_irq_state)
 #define KVM_S390_GET_IRQ_STATE _IOW(KVMIO, 0xb6, struct kvm_s390_irq_state)
 #define KVM_SMI _IO(KVMIO, 0xb7)
+#define KVM_S390_GET_CMMA_BITS _IOWR(KVMIO, 0xb8, struct kvm_s390_cmma_log)
+#define KVM_S390_SET_CMMA_BITS _IOW(KVMIO, 0xb9, struct kvm_s390_cmma_log)
 #define KVM_DEV_ASSIGN_ENABLE_IOMMU (1 << 0)
 #define KVM_DEV_ASSIGN_PCI_2_3 (1 << 1)
 #define KVM_DEV_ASSIGN_MASK_INTX (1 << 2)

@@ -38,6 +38,7 @@ struct drm_msm_timespec {
 #define MSM_PARAM_MAX_FREQ 0x04
 #define MSM_PARAM_TIMESTAMP 0x05
 #define MSM_PARAM_GMEM_BASE 0x06
+#define MSM_PARAM_NR_RINGS 0x07
 struct drm_msm_param {
   __u32 pipe;
   __u32 param;
@@ -55,9 +56,11 @@ struct drm_msm_gem_new {
   __u32 flags;
   __u32 handle;
 };
+#define MSM_INFO_IOVA 0x01
+#define MSM_INFO_FLAGS (MSM_INFO_IOVA)
 struct drm_msm_gem_info {
   __u32 handle;
-  __u32 pad;
+  __u32 flags;
   __u64 offset;
 };
 #define MSM_PREP_READ 0x01
@@ -89,7 +92,7 @@ struct drm_msm_gem_submit_cmd {
   __u32 size;
   __u32 pad;
   __u32 nr_relocs;
-  __u64 __user relocs;
+  __u64 relocs;
 };
 #define MSM_SUBMIT_BO_READ 0x0001
 #define MSM_SUBMIT_BO_WRITE 0x0002
@@ -108,14 +111,16 @@ struct drm_msm_gem_submit {
   __u32 fence;
   __u32 nr_bos;
   __u32 nr_cmds;
-  __u64 __user bos;
-  __u64 __user cmds;
+  __u64 bos;
+  __u64 cmds;
   __s32 fence_fd;
+  __u32 queueid;
 };
 struct drm_msm_wait_fence {
   __u32 fence;
   __u32 pad;
   struct drm_msm_timespec timeout;
+  __u32 queueid;
 };
 #define MSM_MADV_WILLNEED 0
 #define MSM_MADV_DONTNEED 1
@@ -125,6 +130,12 @@ struct drm_msm_gem_madvise {
   __u32 madv;
   __u32 retained;
 };
+#define MSM_SUBMITQUEUE_FLAGS (0)
+struct drm_msm_submitqueue {
+  __u32 flags;
+  __u32 prio;
+  __u32 id;
+};
 #define DRM_MSM_GET_PARAM 0x00
 #define DRM_MSM_GEM_NEW 0x02
 #define DRM_MSM_GEM_INFO 0x03
@@ -133,7 +144,8 @@ struct drm_msm_gem_madvise {
 #define DRM_MSM_GEM_SUBMIT 0x06
 #define DRM_MSM_WAIT_FENCE 0x07
 #define DRM_MSM_GEM_MADVISE 0x08
-#define DRM_MSM_NUM_IOCTLS 0x09
+#define DRM_MSM_SUBMITQUEUE_NEW 0x0A
+#define DRM_MSM_SUBMITQUEUE_CLOSE 0x0B
 #define DRM_IOCTL_MSM_GET_PARAM DRM_IOWR(DRM_COMMAND_BASE + DRM_MSM_GET_PARAM, struct drm_msm_param)
 #define DRM_IOCTL_MSM_GEM_NEW DRM_IOWR(DRM_COMMAND_BASE + DRM_MSM_GEM_NEW, struct drm_msm_gem_new)
 #define DRM_IOCTL_MSM_GEM_INFO DRM_IOWR(DRM_COMMAND_BASE + DRM_MSM_GEM_INFO, struct drm_msm_gem_info)
@@ -142,6 +154,8 @@ struct drm_msm_gem_madvise {
 #define DRM_IOCTL_MSM_GEM_SUBMIT DRM_IOWR(DRM_COMMAND_BASE + DRM_MSM_GEM_SUBMIT, struct drm_msm_gem_submit)
 #define DRM_IOCTL_MSM_WAIT_FENCE DRM_IOW(DRM_COMMAND_BASE + DRM_MSM_WAIT_FENCE, struct drm_msm_wait_fence)
 #define DRM_IOCTL_MSM_GEM_MADVISE DRM_IOWR(DRM_COMMAND_BASE + DRM_MSM_GEM_MADVISE, struct drm_msm_gem_madvise)
+#define DRM_IOCTL_MSM_SUBMITQUEUE_NEW DRM_IOWR(DRM_COMMAND_BASE + DRM_MSM_SUBMITQUEUE_NEW, struct drm_msm_submitqueue)
+#define DRM_IOCTL_MSM_SUBMITQUEUE_CLOSE DRM_IOW(DRM_COMMAND_BASE + DRM_MSM_SUBMITQUEUE_CLOSE, __u32)
 #ifdef __cplusplus
 #endif
 #endif

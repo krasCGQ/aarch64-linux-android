@@ -101,6 +101,11 @@ int wcscoll(const wchar_t* __lhs, const wchar_t* __rhs);
 wchar_t* wcscpy(wchar_t* __dst, const wchar_t* __src);
 size_t wcscspn(const wchar_t* __s, const wchar_t* __accept);
 size_t wcsftime(wchar_t* __buf, size_t __n, const wchar_t* __fmt, const struct tm* __tm);
+
+#if __ANDROID_API__ >= 28
+size_t wcsftime_l(wchar_t* __buf, size_t __n, const wchar_t* __fmt, const struct tm* __tm, locale_t __l) __INTRODUCED_IN(28);
+#endif /* __ANDROID_API__ >= 28 */
+
 size_t wcslen(const wchar_t* __s);
 int wcsncasecmp(const wchar_t* __lhs, const wchar_t* __rhs, size_t __n);
 
@@ -123,12 +128,27 @@ size_t wcsspn(const wchar_t* __s, const wchar_t* __accept);
 wchar_t* wcsstr(const wchar_t* __haystack, const wchar_t* __needle);
 double wcstod(const wchar_t* __s, wchar_t** __end_ptr);
 
+#if __ANDROID_API__ >= 28
+double wcstod_l(const wchar_t* __s, wchar_t** __end_ptr, locale_t __l) __INTRODUCED_IN(28);
+#endif /* __ANDROID_API__ >= 28 */
+
+
 #if __ANDROID_API__ >= 21
 float wcstof(const wchar_t* __s, wchar_t** __end_ptr) __INTRODUCED_IN(21);
 #endif /* __ANDROID_API__ >= 21 */
 
+
+#if __ANDROID_API__ >= 28
+float wcstof_l(const wchar_t* __s, wchar_t** __end_ptr, locale_t __l) __INTRODUCED_IN(28);
+#endif /* __ANDROID_API__ >= 28 */
+
 wchar_t* wcstok(wchar_t* __s, const wchar_t* __delimiter, wchar_t** __ptr);
 long wcstol(const wchar_t* __s, wchar_t** __end_ptr, int __base);
+
+#if __ANDROID_API__ >= 28
+long wcstol_l(const wchar_t* __s, wchar_t** __end_ptr, int __base, locale_t __l) __INTRODUCED_IN(28);
+#endif /* __ANDROID_API__ >= 28 */
+
 
 #if __ANDROID_API__ >= 21
 long long wcstoll(const wchar_t* __s, wchar_t** __end_ptr, int __base) __INTRODUCED_IN(21);
@@ -136,6 +156,11 @@ long long wcstoll(const wchar_t* __s, wchar_t** __end_ptr, int __base) __INTRODU
 
 long double wcstold(const wchar_t* __s, wchar_t** __end_ptr) __RENAME_LDBL(wcstod, 3, 21);
 unsigned long wcstoul(const wchar_t* __s, wchar_t** __end_ptr, int __base);
+
+#if __ANDROID_API__ >= 28
+unsigned long wcstoul_l(const wchar_t* __s, wchar_t** __end_ptr, int __base, locale_t __l) __INTRODUCED_IN(28);
+#endif /* __ANDROID_API__ >= 28 */
+
 
 #if __ANDROID_API__ >= 21
 unsigned long long wcstoull(const wchar_t* __s, wchar_t** __end_ptr, int __base) __INTRODUCED_IN(21);

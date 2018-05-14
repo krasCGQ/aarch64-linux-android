@@ -58,16 +58,10 @@ __BEGIN_DECLS
 
 #if __ANDROID_API__ >= 17
 int ftw(const char* __dir_path, int (*__callback)(const char*, const struct stat*, int), int __max_fd_count) __INTRODUCED_IN(17);
-int nftw(const char* __dir_path, int (*__callback)(const char*, const struct stat*, int, struct FTW*), int __max_fd_count, int __flags)
-  __INTRODUCED_IN(17);
+int nftw(const char* __dir_path, int (*__callback)(const char*, const struct stat*, int, struct FTW*), int __max_fd_count, int __flags) __INTRODUCED_IN(17);
+int ftw64(const char* __dir_path, int (*__callback)(const char*, const struct stat64*, int), int __max_fd_count) __RENAME_STAT64(ftw, 17, 21);
+int nftw64(const char* __dir_path, int (*__callback)(const char*, const struct stat64*, int, struct FTW*), int __max_fd_count, int __flags) __RENAME_STAT64(nftw, 17, 21);
 #endif /* __ANDROID_API__ >= 17 */
-
-
-#if __ANDROID_API__ >= 21
-int ftw64(const char* __dir_path, int (*__callback)(const char*, const struct stat64*, int), int __max_fd_count) __INTRODUCED_IN(21);
-int nftw64(const char* __dir_path, int (*__callback)(const char*, const struct stat64*, int, struct FTW*), int __max_fd_count, int __flags)
-  __INTRODUCED_IN(21);
-#endif /* __ANDROID_API__ >= 21 */
 
 __END_DECLS
 

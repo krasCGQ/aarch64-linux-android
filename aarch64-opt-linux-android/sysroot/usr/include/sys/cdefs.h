@@ -120,6 +120,7 @@
 
 #define __printflike(x, y) __attribute__((__format__(printf, x, y)))
 #define __scanflike(x, y) __attribute__((__format__(scanf, x, y)))
+#define __strftimelike(x) __attribute__((__format__(strftime, x, 0)))
 
 /*
  * GNU C version 2.96 added explicit branch prediction so that
@@ -205,25 +206,28 @@
  * In our header files we test against __USE_BSD and __USE_GNU.
  */
 #if defined(_GNU_SOURCE)
-# define __USE_BSD 1
-# define __USE_GNU 1
+#  define __USE_BSD 1
+#  define __USE_GNU 1
 #endif
 
 #if defined(_BSD_SOURCE)
-# define __USE_BSD 1
+#  define __USE_BSD 1
 #endif
 
-/* _FILE_OFFSET_BITS 64 support. */
+/*
+ * _FILE_OFFSET_BITS 64 support.
+ * See https://android.googlesource.com/platform/bionic/+/master/docs/32-bit-abi.md
+ */
 #if !defined(__LP64__) && defined(_FILE_OFFSET_BITS) && _FILE_OFFSET_BITS == 64
-#define __USE_FILE_OFFSET64 1
+#  define __USE_FILE_OFFSET64 1
 /*
  * Note that __RENAME_IF_FILE_OFFSET64 is only valid if the off_t and off64_t
  * functions were both added at the same API level because if you use this,
  * you only have one declaration to attach __INTRODUCED_IN to.
  */
-#define __RENAME_IF_FILE_OFFSET64(func) __RENAME(func)
+#  define __RENAME_IF_FILE_OFFSET64(func) __RENAME(func)
 #else
-#define __RENAME_IF_FILE_OFFSET64(func)
+#  define __RENAME_IF_FILE_OFFSET64(func)
 #endif
 
 /*
@@ -240,6 +244,16 @@
 #define __RENAME_LDBL(rewrite,rewrite_api_level,regular_api_level) __INTRODUCED_IN(regular_api_level)
 #else
 #define __RENAME_LDBL(rewrite,rewrite_api_level,regular_api_level) __RENAME(rewrite) __INTRODUCED_IN(rewrite_api_level)
+#endif
+
+/*
+ * On all architectures, `struct stat` == `struct stat64`, but LP32 didn't gain the *64 functions
+ * until API level 21.
+ */
+#if defined(__LP64__) || defined(__BIONIC_LP32_USE_STAT64)
+#define __RENAME_STAT64(rewrite,rewrite_api_level,regular_api_level) __INTRODUCED_IN(regular_api_level)
+#else
+#define __RENAME_STAT64(rewrite,rewrite_api_level,regular_api_level) __RENAME(rewrite) __INTRODUCED_IN(rewrite_api_level)
 #endif
 
 /* glibc compatibility. */
@@ -261,8 +275,13 @@
 
 #if defined(_FORTIFY_SOURCE) && _FORTIFY_SOURCE > 0
 #  if defined(__clang__)
-/* FORTIFY's _chk functions effectively disable ASAN's stdlib interceptors. */
-#    if !__has_feature(address_sanitizer)
+/*
+ * FORTIFY's _chk functions effectively disable ASAN's stdlib interceptors.
+ * Additionally, the static analyzer/clang-tidy try to pattern match some
+ * standard library functions, and FORTIFY sometimes interferes with this. So,
+ * we turn FORTIFY off in both cases.
+ */
+#    if !__has_feature(address_sanitizer) && !defined(__clang_analyzer__)
 #      define __BIONIC_FORTIFY 1
 #    endif
 #  elif defined(__OPTIMIZE__) && __OPTIMIZE__ > 0
@@ -270,14 +289,22 @@
 #  endif
 #endif
 
+// As we move some FORTIFY checks to be always on, __bos needs to be
+// always available.
 #if defined(__BIONIC_FORTIFY)
 #  if _FORTIFY_SOURCE == 2
 #    define __bos_level 1
 #  else
 #    define __bos_level 0
 #  endif
-#  define __bosn(s, n) __builtin_object_size((s), (n))
-#  define __bos(s) __bosn((s), __bos_level)
+#else
+#  define __bos_level 0
+#endif
+
+#define __bosn(s, n) __builtin_object_size((s), (n))
+#define __bos(s) __bosn((s), __bos_level)
+
+#if defined(__BIONIC_FORTIFY)
 #  define __bos0(s) __bosn((s), 0)
 #  if defined(__clang__)
 #    define __pass_object_size_n(n) __attribute__((pass_object_size(n)))
@@ -292,6 +319,13 @@
  * inline` without making them available externally.
  */
 #    define __BIONIC_FORTIFY_INLINE static __inline__ __always_inline
+/*
+ * We should use __BIONIC_FORTIFY_VARIADIC instead of __BIONIC_FORTIFY_INLINE
+ * for variadic functions because compilers cannot inline them.
+ * The __always_inline attribute is useless, misleading, and could trigger
+ * clang compiler bug to incorrectly inline variadic functions.
+ */
+#    define __BIONIC_FORTIFY_VARIADIC static __inline__
 /* Error functions don't have bodies, so they can just be static. */
 #    define __BIONIC_ERROR_FUNCTION_VISIBILITY static
 #  else
@@ -303,6 +337,8 @@
 #    define __call_bypassing_fortify(fn) (fn)
 /* __BIONIC_FORTIFY_NONSTATIC_INLINE is pointless in GCC's FORTIFY */
 #    define __BIONIC_FORTIFY_INLINE extern __inline__ __always_inline __attribute__((gnu_inline)) __attribute__((__artificial__))
+/* __always_inline is probably okay and ignored by gcc in __BIONIC_FORTIFY_VARIADIC */
+#    define __BIONIC_FORTIFY_VARIADIC __BIONIC_FORTIFY_INLINE
 #  endif
 #else
 /* Further increase sharing for some inline functions */
@@ -315,27 +351,10 @@
 #  define __BIONIC_INCLUDE_FORTIFY_HEADERS 1
 #endif
 
-/*
- * Used to support clangisms with FORTIFY. Because these change how symbols are
- * emitted, we need to ensure that bionic itself is built fortified. But lots
- * of external code (especially stuff using configure) likes to declare
- * functions directly, and they can't know that the overloadable attribute
- * exists. This leads to errors like:
- *
- * dcigettext.c:151:7: error: redeclaration of 'getcwd' must have the 'overloadable' attribute
- * char *getcwd ();
- *       ^
- *
- * To avoid this and keep such software building, don't use overloadable if
- * we're not using fortify.
- */
-#if defined(__clang__) && defined(__BIONIC_FORTIFY)
+#if defined(__clang__)
 #  define __overloadable __attribute__((overloadable))
-/* We don't use __RENAME directly because on gcc this could result in unnecessary renames. */
-#  define __RENAME_CLANG(x) __RENAME(x)
 #else
 #  define __overloadable
-#  define __RENAME_CLANG(x)
 #endif
 
 /* Used to tag non-static symbols that are private and never exposed by the shared library. */

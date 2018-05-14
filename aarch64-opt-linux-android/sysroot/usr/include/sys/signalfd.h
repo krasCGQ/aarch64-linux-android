@@ -42,6 +42,11 @@ int signalfd(int __fd, const sigset_t* __mask, int __flags) __INTRODUCED_IN(18);
 #endif /* __ANDROID_API__ >= 18 */
 
 
+#if __ANDROID_API__ >= 28
+int signalfd64(int __fd, const sigset64_t* __mask, int __flags) __INTRODUCED_IN(28);
+#endif /* __ANDROID_API__ >= 28 */
+
+
 __END_DECLS
 
 #endif

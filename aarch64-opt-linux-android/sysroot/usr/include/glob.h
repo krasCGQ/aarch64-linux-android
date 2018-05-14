@@ -91,10 +91,10 @@ typedef struct {
 __BEGIN_DECLS
 
 
-#if __ANDROID_API__ >= __ANDROID_API_FUTURE__
-int glob(const char* __pattern, int __flags, int (*__error_callback)(const char* __failure_path, int __failure_errno), glob_t* __result_ptr) __INTRODUCED_IN_FUTURE;
-void globfree(glob_t* __result_ptr) __INTRODUCED_IN_FUTURE;
-#endif /* __ANDROID_API__ >= __ANDROID_API_FUTURE__ */
+#if __ANDROID_API__ >= 28
+int glob(const char* __pattern, int __flags, int (*__error_callback)(const char* __failure_path, int __failure_errno), glob_t* __result_ptr) __INTRODUCED_IN(28);
+void globfree(glob_t* __result_ptr) __INTRODUCED_IN(28);
+#endif /* __ANDROID_API__ >= 28 */
 
 
 __END_DECLS

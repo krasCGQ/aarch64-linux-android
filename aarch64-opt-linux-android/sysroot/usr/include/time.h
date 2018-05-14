@@ -74,11 +74,16 @@ struct tm* localtime_r(const time_t* __t, struct tm* __tm);
 struct tm* gmtime(const time_t* __t);
 struct tm* gmtime_r(const time_t* __t, struct tm* __tm);
 
-char* strptime(const char* __s, const char* __fmt, struct tm* __tm);
-size_t strftime(char* __buf, size_t __n, const char* __fmt, const struct tm* __tm);
+char* strptime(const char* __s, const char* __fmt, struct tm* __tm) __strftimelike(2);
 
+#if __ANDROID_API__ >= 28
+char* strptime_l(const char* __s, const char* __fmt, struct tm* __tm, locale_t __l) __strftimelike(2) __INTRODUCED_IN(28);
+#endif /* __ANDROID_API__ >= 28 */
+
+
+size_t strftime(char* __buf, size_t __n, const char* __fmt, const struct tm* __tm) __strftimelike(3);
 #if __ANDROID_API__ >= __ANDROID_API_L__
-size_t strftime_l(char* __buf, size_t __n, const char* __fmt, const struct tm* __tm, locale_t __l) __INTRODUCED_IN(21);
+size_t strftime_l(char* __buf, size_t __n, const char* __fmt, const struct tm* __tm, locale_t __l) __strftimelike(3) __INTRODUCED_IN(21);
 #else
 // Implemented as static inline before 21.
 #endif
@@ -108,12 +113,8 @@ int timer_gettime(timer_t __timer, struct itimerspec* __ts);
 int timer_getoverrun(timer_t __timer);
 
 /* Non-standard extensions that are in the BSDs and glibc. */
-
-#if __ANDROID_API__ >= 12
 time_t timelocal(struct tm* __tm) __INTRODUCED_IN(12);
 time_t timegm(struct tm* __tm) __INTRODUCED_IN(12);
-#endif /* __ANDROID_API__ >= 12 */
-
 
 __END_DECLS
 

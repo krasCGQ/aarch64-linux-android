@@ -2,23 +2,22 @@
 #define ANDROID_NDK_VERSION_H
 
 /**
- * Major vision of this NDK.
+ * Major version of this NDK.
  *
  * For example: 16 for r16.
  */
-#define __NDK_MAJOR__ 16
+#define __NDK_MAJOR__ 17
 
 /**
- * Minor vision of this NDK.
+ * Minor version of this NDK.
  *
- * For example: 1 for r16b.
+ * For example: 0 for r16 and 1 for r16b.
  */
-#define __NDK_MINOR__ 1
+#define __NDK_MINOR__ 0
 
 /**
- * Beta vision of this NDK.
- *
- * For example: 1 for r16 beta 1, 0 for r16.
+ * Set to 0 if this is a release build, or 1 for beta 1,
+ * 2 for beta 2, and so on.
  */
 #define __NDK_BETA__ 0
 
@@ -27,7 +26,7 @@
  *
  * For a local development build of the NDK, this is -1.
  */
-#define __NDK_BUILD__ 4479499
+#define __NDK_BUILD__ 4754217
 
 /**
  * Set to 1 if this is a canary build, 0 if not.

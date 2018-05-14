@@ -167,7 +167,7 @@ struct btrfs_ioctl_fs_info_args {
 #define BTRFS_FEATURE_INCOMPAT_DEFAULT_SUBVOL (1ULL << 1)
 #define BTRFS_FEATURE_INCOMPAT_MIXED_GROUPS (1ULL << 2)
 #define BTRFS_FEATURE_INCOMPAT_COMPRESS_LZO (1ULL << 3)
-#define BTRFS_FEATURE_INCOMPAT_COMPRESS_LZOv2 (1ULL << 4)
+#define BTRFS_FEATURE_INCOMPAT_COMPRESS_ZSTD (1ULL << 4)
 #define BTRFS_FEATURE_INCOMPAT_BIG_METADATA (1ULL << 5)
 #define BTRFS_FEATURE_INCOMPAT_EXTENDED_IREF (1ULL << 6)
 #define BTRFS_FEATURE_INCOMPAT_RAID56 (1ULL << 7)
@@ -339,9 +339,11 @@ struct btrfs_ioctl_ino_path_args {
 struct btrfs_ioctl_logical_ino_args {
   __u64 logical;
   __u64 size;
-  __u64 reserved[4];
+  __u64 reserved[3];
+  __u64 flags;
   __u64 inodes;
 };
+#define BTRFS_LOGICAL_INO_ARGS_IGNORE_OFFSET (1ULL << 0)
 enum btrfs_dev_stat_values {
   BTRFS_DEV_STAT_WRITE_ERRS,
   BTRFS_DEV_STAT_READ_ERRS,
@@ -469,4 +471,5 @@ enum btrfs_err_code {
 #define BTRFS_IOC_SET_FEATURES _IOW(BTRFS_IOCTL_MAGIC, 57, struct btrfs_ioctl_feature_flags[2])
 #define BTRFS_IOC_GET_SUPPORTED_FEATURES _IOR(BTRFS_IOCTL_MAGIC, 57, struct btrfs_ioctl_feature_flags[3])
 #define BTRFS_IOC_RM_DEV_V2 _IOW(BTRFS_IOCTL_MAGIC, 58, struct btrfs_ioctl_vol_args_v2)
+#define BTRFS_IOC_LOGICAL_INO_V2 _IOWR(BTRFS_IOCTL_MAGIC, 59, struct btrfs_ioctl_logical_ino_args)
 #endif

@@ -84,10 +84,10 @@ struct dirent* readdir(DIR* __dir);
 struct dirent64* readdir64(DIR* __dir) __INTRODUCED_IN(21);
 #endif /* __ANDROID_API__ >= 21 */
 
-int readdir_r(DIR* __dir, struct dirent* __entry, struct dirent** __buffer);
+int readdir_r(DIR* __dir, struct dirent* __entry, struct dirent** __buffer) __attribute__((__deprecated__("readdir_r is deprecated; use readdir instead")));
 
 #if __ANDROID_API__ >= 21
-int readdir64_r(DIR* __dir, struct dirent64* __entry, struct dirent64** __buffer) __INTRODUCED_IN(21);
+int readdir64_r(DIR* __dir, struct dirent64* __entry, struct dirent64** __buffer) __INTRODUCED_IN(21) __attribute__((__deprecated__("readdir64_r is deprecated; use readdir64 instead")));
 #endif /* __ANDROID_API__ >= 21 */
 
 int closedir(DIR* __dir);

@@ -131,6 +131,8 @@ enum {
 #define RTM_NEWSTATS RTM_NEWSTATS
   RTM_GETSTATS = 94,
 #define RTM_GETSTATS RTM_GETSTATS
+  RTM_NEWCACHEREPORT = 96,
+#define RTM_NEWCACHEREPORT RTM_NEWCACHEREPORT
   __RTM_MAX,
 #define RTM_MAX (((__RTM_MAX + 3) & ~3) - 1)
 };
@@ -204,6 +206,7 @@ enum rt_scope_t {
 #define RTM_F_EQUALIZE 0x400
 #define RTM_F_PREFIX 0x800
 #define RTM_F_LOOKUP_TABLE 0x1000
+#define RTM_F_FIB_MATCH 0x2000
 enum rt_class_t {
   RT_TABLE_UNSPEC = 0,
   RT_TABLE_COMPAT = 252,
@@ -315,6 +318,8 @@ enum {
 #define RTAX_QUICKACK RTAX_QUICKACK
   RTAX_CC_ALGO,
 #define RTAX_CC_ALGO RTAX_CC_ALGO
+  RTAX_FASTOPEN_NO_COOKIE,
+#define RTAX_FASTOPEN_NO_COOKIE RTAX_FASTOPEN_NO_COOKIE
   __RTAX_MAX
 };
 #define RTAX_MAX (__RTAX_MAX - 1)
@@ -398,6 +403,8 @@ enum {
   TCA_STAB,
   TCA_PAD,
   TCA_DUMP_INVISIBLE,
+  TCA_CHAIN,
+  TCA_HW_OFFLOAD,
   __TCA_MAX
 };
 #define TCA_MAX (__TCA_MAX - 1)
@@ -493,6 +500,10 @@ enum rtnetlink_groups {
 #define RTNLGRP_NSID RTNLGRP_NSID
   RTNLGRP_MPLS_NETCONF,
 #define RTNLGRP_MPLS_NETCONF RTNLGRP_MPLS_NETCONF
+  RTNLGRP_IPV4_MROUTE_R,
+#define RTNLGRP_IPV4_MROUTE_R RTNLGRP_IPV4_MROUTE_R
+  RTNLGRP_IPV6_MROUTE_R,
+#define RTNLGRP_IPV6_MROUTE_R RTNLGRP_IPV6_MROUTE_R
   __RTNLGRP_MAX
 };
 #define RTNLGRP_MAX (__RTNLGRP_MAX - 1)
@@ -501,10 +512,20 @@ struct tcamsg {
   unsigned char tca__pad1;
   unsigned short tca__pad2;
 };
+enum {
+  TCA_ROOT_UNSPEC,
+  TCA_ROOT_TAB,
+#define TCA_ACT_TAB TCA_ROOT_TAB
+#define TCAA_MAX TCA_ROOT_TAB
+  TCA_ROOT_FLAGS,
+  TCA_ROOT_COUNT,
+  TCA_ROOT_TIME_DELTA,
+  __TCA_ROOT_MAX,
+#define TCA_ROOT_MAX (__TCA_ROOT_MAX - 1)
+};
 #define TA_RTA(r) ((struct rtattr *) (((char *) (r)) + NLMSG_ALIGN(sizeof(struct tcamsg))))
 #define TA_PAYLOAD(n) NLMSG_PAYLOAD(n, sizeof(struct tcamsg))
-#define TCA_ACT_TAB 1
-#define TCAA_MAX 1
+#define TCA_FLAG_LARGE_DUMP_ON (1 << 0)
 #define RTEXT_FILTER_VF (1 << 0)
 #define RTEXT_FILTER_BRVLAN (1 << 1)
 #define RTEXT_FILTER_BRVLAN_COMPRESSED (1 << 2)

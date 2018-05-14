@@ -71,14 +71,10 @@ void _longjmp(jmp_buf __env, int __value);
 int setjmp(jmp_buf __env);
 void longjmp(jmp_buf __env, int __value);
 
-
-#if (defined(__LP64__)) || (defined(__arm__)) || (defined(__mips__) && !defined(__LP64__) && __ANDROID_API__ >= 12) || (defined(__i386__) && __ANDROID_API__ >= 12)
 int sigsetjmp(sigjmp_buf __env, int __save_signal_mask)
     __INTRODUCED_IN_ARM(9) __INTRODUCED_IN_MIPS(12) __INTRODUCED_IN_X86(12);
 void siglongjmp(sigjmp_buf __env, int __value)
     __INTRODUCED_IN_ARM(9) __INTRODUCED_IN_MIPS(12) __INTRODUCED_IN_X86(12);
-#endif /* (defined(__LP64__)) || (defined(__arm__)) || (defined(__mips__) && !defined(__LP64__) && __ANDROID_API__ >= 12) || (defined(__i386__) && __ANDROID_API__ >= 12) */
-
 
 __END_DECLS
 

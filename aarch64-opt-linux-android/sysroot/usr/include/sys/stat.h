@@ -156,32 +156,16 @@ int fchmod(int __fd, mode_t __mode);
 int mkdir(const char* __path, mode_t __mode);
 
 int fstat(int __fd, struct stat* __buf);
-
-#if __ANDROID_API__ >= 21
-int fstat64(int __fd, struct stat64* __buf) __INTRODUCED_IN(21);
-#endif /* __ANDROID_API__ >= 21 */
-
+int fstat64(int __fd, struct stat64* __buf) __RENAME_STAT64(fstat, 3, 21);
 int fstatat(int __dir_fd, const char* __path, struct stat* __buf, int __flags);
-
-#if __ANDROID_API__ >= 21
-int fstatat64(int __dir_fd, const char* __path, struct stat64* __buf, int __flags) __INTRODUCED_IN(21);
-#endif /* __ANDROID_API__ >= 21 */
-
+int fstatat64(int __dir_fd, const char* __path, struct stat64* __buf, int __flags) __RENAME_STAT64(fstatat, 3, 21);
 int lstat(const char* __path, struct stat* __buf);
-
-#if __ANDROID_API__ >= 21
-int lstat64(const char* __path, struct stat64* __buf) __INTRODUCED_IN(21);
-#endif /* __ANDROID_API__ >= 21 */
-
+int lstat64(const char* __path, struct stat64* __buf) __RENAME_STAT64(lstat, 3, 21);
 int stat(const char* __path, struct stat* __buf);
-
-#if __ANDROID_API__ >= 21
-int stat64(const char* __path, struct stat64* __buf) __INTRODUCED_IN(21);
-#endif /* __ANDROID_API__ >= 21 */
-
+int stat64(const char* __path, struct stat64* __buf) __RENAME_STAT64(stat, 3, 21);
 
 int mknod(const char* __path, mode_t __mode, dev_t __dev);
-mode_t umask(mode_t __mask) __overloadable __RENAME_CLANG(umask);
+mode_t umask(mode_t __mask);
 
 #if defined(__BIONIC_INCLUDE_FORTIFY_HEADERS)
 #include <bits/fortify/stat.h>
@@ -209,12 +193,8 @@ int mknodat(int __dir_fd, const char* __path, mode_t __mode, dev_t __dev) __INTR
 
 #define UTIME_NOW  ((1L << 30) - 1L)
 #define UTIME_OMIT ((1L << 30) - 2L)
-
-#if __ANDROID_API__ >= 12
 int utimensat(int __dir_fd, const char* __path, const struct timespec __times[2], int __flags)
   __INTRODUCED_IN(12);
-#endif /* __ANDROID_API__ >= 12 */
-
 
 #if __ANDROID_API__ >= 19
 int futimens(int __dir_fd, const struct timespec __times[2]) __INTRODUCED_IN(19);
