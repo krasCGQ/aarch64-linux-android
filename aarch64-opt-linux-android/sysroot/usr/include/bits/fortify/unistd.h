@@ -47,11 +47,7 @@ ssize_t __pread_real(int, void*, size_t, off_t) __RENAME(pread);
 ssize_t __pread64_chk(int, void*, size_t, off64_t, size_t) __INTRODUCED_IN(23);
 #endif /* __ANDROID_API__ >= 23 */
 
-
-#if __ANDROID_API__ >= 12
 ssize_t __pread64_real(int, void*, size_t, off64_t) __RENAME(pread64) __INTRODUCED_IN(12);
-#endif /* __ANDROID_API__ >= 12 */
-
 
 
 #if __ANDROID_API__ >= 24
@@ -65,12 +61,8 @@ ssize_t __pwrite_real(int, const void*, size_t, off_t) __RENAME(pwrite);
 ssize_t __pwrite64_chk(int, const void*, size_t, off64_t, size_t) __INTRODUCED_IN(24);
 #endif /* __ANDROID_API__ >= 24 */
 
-
-#if __ANDROID_API__ >= 12
 ssize_t __pwrite64_real(int, const void*, size_t, off64_t) __RENAME(pwrite64)
   __INTRODUCED_IN(12);
-#endif /* __ANDROID_API__ >= 12 */
-
 
 
 #if __ANDROID_API__ >= 21

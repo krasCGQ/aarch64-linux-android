@@ -34,6 +34,7 @@
 
 __BEGIN_DECLS
 
+/* See https://android.googlesource.com/platform/bionic/+/master/docs/32-bit-abi.md */
 #if defined(__USE_FILE_OFFSET64)
 
 #if __ANDROID_API__ >= 21

@@ -54,6 +54,9 @@ enum {
 #define PTHREAD_ERRORCHECK_MUTEX_INITIALIZER_NP { { ((PTHREAD_MUTEX_ERRORCHECK & 3) << 14) } }
 
 #define PTHREAD_COND_INITIALIZER  { { 0 } }
+#if __ANDROID_API__ >= __ANDROID_API_L__
+#define PTHREAD_COND_INITIALIZER_MONOTONIC_NP  { { 1 << 1 } }
+#endif
 
 #define PTHREAD_RWLOCK_INITIALIZER  { { 0 } }
 
@@ -74,24 +77,27 @@ enum {
 #define PTHREAD_STACK_MIN (2 * PAGE_SIZE)
 #endif
 
-#define PTHREAD_CREATE_DETACHED  0x00000001
-#define PTHREAD_CREATE_JOINABLE  0x00000000
+#define PTHREAD_CREATE_DETACHED 1
+#define PTHREAD_CREATE_JOINABLE 0
 
-#define PTHREAD_PROCESS_PRIVATE  0
-#define PTHREAD_PROCESS_SHARED   1
+#define PTHREAD_EXPLICIT_SCHED 0
+#define PTHREAD_INHERIT_SCHED 1
 
-#define PTHREAD_SCOPE_SYSTEM     0
-#define PTHREAD_SCOPE_PROCESS    1
+#define PTHREAD_PRIO_NONE 0
+#define PTHREAD_PRIO_INHERIT 1
 
+#define PTHREAD_PROCESS_PRIVATE 0
+#define PTHREAD_PROCESS_SHARED 1
 
-#if __ANDROID_API__ >= 12
+#define PTHREAD_SCOPE_SYSTEM 0
+#define PTHREAD_SCOPE_PROCESS 1
+
 int pthread_atfork(void (*__prepare)(void), void (*__parent)(void), void (*__child)(void)) __INTRODUCED_IN(12);
-#endif /* __ANDROID_API__ >= 12 */
-
 
 int pthread_attr_destroy(pthread_attr_t* __attr);
 int pthread_attr_getdetachstate(const pthread_attr_t* __attr, int* __state);
 int pthread_attr_getguardsize(const pthread_attr_t* __attr, size_t* __size);
+int pthread_attr_getinheritsched(const pthread_attr_t* __attr, int* __flag);
 int pthread_attr_getschedparam(const pthread_attr_t* __attr, struct sched_param* __param);
 int pthread_attr_getschedpolicy(const pthread_attr_t* __attr, int* __policy);
 int pthread_attr_getscope(const pthread_attr_t* __attr, int* __scope);
@@ -100,6 +106,7 @@ int pthread_attr_getstacksize(const pthread_attr_t* __attr, size_t* __size);
 int pthread_attr_init(pthread_attr_t* __attr);
 int pthread_attr_setdetachstate(pthread_attr_t* __attr, int __state);
 int pthread_attr_setguardsize(pthread_attr_t* __attr, size_t __size);
+int pthread_attr_setinheritsched(pthread_attr_t* __attr, int __flag);
 int pthread_attr_setschedparam(pthread_attr_t* __attr, const struct sched_param* __param);
 int pthread_attr_setschedpolicy(pthread_attr_t* __attr, int __policy);
 int pthread_attr_setscope(pthread_attr_t* __attr, int __scope);
@@ -126,6 +133,20 @@ int pthread_cond_destroy(pthread_cond_t* __cond);
 int pthread_cond_init(pthread_cond_t* __cond, const pthread_condattr_t* __attr);
 int pthread_cond_signal(pthread_cond_t* __cond);
 int pthread_cond_timedwait(pthread_cond_t* __cond, pthread_mutex_t* __mutex, const struct timespec* __timeout);
+/*
+ * Condition variables use CLOCK_REALTIME by default for their timeouts, however that is
+ * typically inappropriate, since that clock can change dramatically, causing the timeout to
+ * either expire earlier or much later than intended.
+ * Condition variables have an initialization option to use CLOCK_MONOTONIC, and in addition,
+ * Android provides this API to use CLOCK_MONOTONIC on a condition variable for this single wait
+ * no matter how it was initialized.
+ */
+
+#if (!defined(__LP64__)) || (defined(__LP64__) && __ANDROID_API__ >= 28)
+int pthread_cond_timedwait_monotonic_np(pthread_cond_t* __cond, pthread_mutex_t* __mutex,
+                                        const struct timespec* __timeout) __INTRODUCED_IN_64(28);
+#endif /* (!defined(__LP64__)) || (defined(__LP64__) && __ANDROID_API__ >= 28) */
+
 int pthread_cond_wait(pthread_cond_t* __cond, pthread_mutex_t* __mutex);
 
 int pthread_create(pthread_t* __pthread_ptr, pthread_attr_t const* __attr, void* (*__start_routine)(void*), void*);
@@ -156,9 +177,19 @@ int pthread_key_delete(pthread_key_t __key);
 int pthread_mutexattr_destroy(pthread_mutexattr_t* __attr);
 int pthread_mutexattr_getpshared(const pthread_mutexattr_t* __attr, int* __shared);
 int pthread_mutexattr_gettype(const pthread_mutexattr_t* __attr, int* __type);
+
+#if __ANDROID_API__ >= 28
+int pthread_mutexattr_getprotocol(const pthread_mutexattr_t* __attr, int* __protocol) __INTRODUCED_IN(28);
+#endif /* __ANDROID_API__ >= 28 */
+
 int pthread_mutexattr_init(pthread_mutexattr_t* __attr);
 int pthread_mutexattr_setpshared(pthread_mutexattr_t* __attr, int __shared);
 int pthread_mutexattr_settype(pthread_mutexattr_t* __attr, int __type);
+
+#if __ANDROID_API__ >= 28
+int pthread_mutexattr_setprotocol(pthread_mutexattr_t* __attr, int __protocol) __INTRODUCED_IN(28);
+#endif /* __ANDROID_API__ >= 28 */
+
 
 int pthread_mutex_destroy(pthread_mutex_t* __mutex);
 int pthread_mutex_init(pthread_mutex_t* __mutex, const pthread_mutexattr_t* __attr);
@@ -168,6 +199,20 @@ int pthread_mutex_lock(pthread_mutex_t* __mutex);
 int pthread_mutex_timedlock(pthread_mutex_t* __mutex, const struct timespec* __timeout)
   __INTRODUCED_IN(21);
 #endif /* __ANDROID_API__ >= 21 */
+
+
+/*
+ * POSIX only supports using pthread_mutex_timedlock() with CLOCK_REALTIME, however that is
+ * typically inappropriate, since that clock can change dramatically, causing the timeout to
+ * either expire earlier or much later than intended.
+ * This function is added to use a timespec based on CLOCK_MONOTONIC that does not suffer
+ * from this issue.
+ */
+
+#if __ANDROID_API__ >= 28
+int pthread_mutex_timedlock_monotonic_np(pthread_mutex_t* __mutex, const struct timespec* __timeout)
+    __INTRODUCED_IN(28);
+#endif /* __ANDROID_API__ >= 28 */
 
 int pthread_mutex_trylock(pthread_mutex_t* __mutex);
 int pthread_mutex_unlock(pthread_mutex_t* __mutex);
@@ -186,7 +231,6 @@ int pthread_mutex_unlock(pthread_mutex_t* __mutex);
  */
 int pthread_mutex_lock_timeout_np(pthread_mutex_t* __mutex, unsigned __timeout_ms);
 int pthread_cond_timeout_np(pthread_cond_t* __cond, pthread_mutex_t* __mutex, unsigned __timeout_ms);
-int pthread_cond_timedwait_monotonic_np(pthread_cond_t* __cond, pthread_mutex_t* __mutex, const struct timespec* __timeout);
 int pthread_cond_timedwait_relative_np(pthread_cond_t* __cond, pthread_mutex_t* __mutex, const struct timespec* __relative_timeout);
 #endif
 
@@ -208,7 +252,21 @@ int pthread_rwlock_destroy(pthread_rwlock_t* __rwlock);
 int pthread_rwlock_init(pthread_rwlock_t* __rwlock, const pthread_rwlockattr_t* __attr);
 int pthread_rwlock_rdlock(pthread_rwlock_t* __rwlock);
 int pthread_rwlock_timedrdlock(pthread_rwlock_t* __rwlock, const struct timespec* __timeout);
+/* See the comment on pthread_mutex_timedlock_monotonic_np for usage of this function. */
+
+#if __ANDROID_API__ >= 28
+int pthread_rwlock_timedrdlock_monotonic_np(pthread_rwlock_t* __rwlock,
+                                            const struct timespec* __timeout) __INTRODUCED_IN(28);
+#endif /* __ANDROID_API__ >= 28 */
+
 int pthread_rwlock_timedwrlock(pthread_rwlock_t* __rwlock, const struct timespec* __timeout);
+/* See the comment on pthread_mutex_timedlock_monotonic_np for usage of this function. */
+
+#if __ANDROID_API__ >= 28
+int pthread_rwlock_timedwrlock_monotonic_np(pthread_rwlock_t* __rwlock,
+                                            const struct timespec* __timeout) __INTRODUCED_IN(28);
+#endif /* __ANDROID_API__ >= 28 */
+
 int pthread_rwlock_tryrdlock(pthread_rwlock_t* __rwlock);
 int pthread_rwlock_trywrlock(pthread_rwlock_t* __rwlock);
 int pthread_rwlock_unlock(pthread_rwlock_t* __rwlock);
@@ -249,9 +307,9 @@ int pthread_setname_np(pthread_t __pthread, const char* __name);
 
 int pthread_setschedparam(pthread_t __pthread, int __policy, const struct sched_param* __param);
 
-#if __ANDROID_API__ >= __ANDROID_API_FUTURE__
-int pthread_setschedprio(pthread_t __pthread, int __priority) __INTRODUCED_IN_FUTURE;
-#endif /* __ANDROID_API__ >= __ANDROID_API_FUTURE__ */
+#if __ANDROID_API__ >= 28
+int pthread_setschedprio(pthread_t __pthread, int __priority) __INTRODUCED_IN(28);
+#endif /* __ANDROID_API__ >= 28 */
 
 
 int pthread_setspecific(pthread_key_t __key, const void* __value);

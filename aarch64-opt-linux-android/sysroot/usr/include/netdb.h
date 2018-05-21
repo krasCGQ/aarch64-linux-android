@@ -223,37 +223,37 @@ int gethostbyname2_r(const char* __name, int __af, struct hostent* __ret, char* 
 #endif /* __ANDROID_API__ >= 23 */
 
 
-#if __ANDROID_API__ >= __ANDROID_API_FUTURE__
-void endhostent(void) __INTRODUCED_IN_FUTURE;
-#endif /* __ANDROID_API__ >= __ANDROID_API_FUTURE__ */
+#if __ANDROID_API__ >= 28
+void endhostent(void) __INTRODUCED_IN(28);
+#endif /* __ANDROID_API__ >= 28 */
 
 struct hostent* gethostent(void);
 
-#if __ANDROID_API__ >= __ANDROID_API_FUTURE__
-void sethostent(int __stay_open) __INTRODUCED_IN_FUTURE;
+#if __ANDROID_API__ >= 28
+void sethostent(int __stay_open) __INTRODUCED_IN(28);
 
 /* These functions are obsolete. None of these functions return anything but nullptr. */
-void endnetent(void) __INTRODUCED_IN_FUTURE;
-#endif /* __ANDROID_API__ >= __ANDROID_API_FUTURE__ */
+void endnetent(void) __INTRODUCED_IN(28);
+#endif /* __ANDROID_API__ >= 28 */
 
 struct netent* getnetbyaddr(uint32_t __net, int __type);
 struct netent* getnetbyname(const char* __name);
 
-#if __ANDROID_API__ >= __ANDROID_API_FUTURE__
-struct netent* getnetent(void) __INTRODUCED_IN_FUTURE;
-void setnetent(int __stay_open) __INTRODUCED_IN_FUTURE;
+#if __ANDROID_API__ >= 28
+struct netent* getnetent(void) __INTRODUCED_IN(28);
+void setnetent(int __stay_open) __INTRODUCED_IN(28);
 
 /* None of these functions return anything but nullptr. */
-void endprotoent(void) __INTRODUCED_IN_FUTURE;
-#endif /* __ANDROID_API__ >= __ANDROID_API_FUTURE__ */
+void endprotoent(void) __INTRODUCED_IN(28);
+#endif /* __ANDROID_API__ >= 28 */
 
 struct protoent* getprotobyname(const char* __name);
 struct protoent* getprotobynumber(int __proto);
 
-#if __ANDROID_API__ >= __ANDROID_API_FUTURE__
-struct protoent* getprotoent(void) __INTRODUCED_IN_FUTURE;
-void setprotoent(int __stay_open) __INTRODUCED_IN_FUTURE;
-#endif /* __ANDROID_API__ >= __ANDROID_API_FUTURE__ */
+#if __ANDROID_API__ >= 28
+struct protoent* getprotoent(void) __INTRODUCED_IN(28);
+void setprotoent(int __stay_open) __INTRODUCED_IN(28);
+#endif /* __ANDROID_API__ >= 28 */
 
 
 /* These functions return entries from a built-in database. */

@@ -76,6 +76,9 @@ typedef __s32 sctp_assoc_t;
 #define SCTP_RESET_STREAMS 119
 #define SCTP_RESET_ASSOC 120
 #define SCTP_ADD_STREAMS 121
+#define SCTP_SOCKOPT_PEELOFF_FLAGS 122
+#define SCTP_STREAM_SCHEDULER 123
+#define SCTP_STREAM_SCHEDULER_VALUE 124
 #define SCTP_PR_SCTP_NONE 0x0000
 #define SCTP_PR_SCTP_TTL 0x0010
 #define SCTP_PR_SCTP_RTX 0x0020
@@ -204,7 +207,7 @@ struct sctp_remote_error {
   __u16 sre_type;
   __u16 sre_flags;
   __u32 sre_length;
-  __u16 sre_error;
+  __be16 sre_error;
   sctp_assoc_t sre_assoc_id;
   __u8 sre_data[0];
 };
@@ -442,6 +445,11 @@ struct sctp_assoc_value {
   sctp_assoc_t assoc_id;
   uint32_t assoc_value;
 };
+struct sctp_stream_value {
+  sctp_assoc_t assoc_id;
+  uint16_t stream_id;
+  uint16_t stream_value;
+};
 struct sctp_paddrinfo {
   sctp_assoc_t spinfo_assoc_id;
   struct sockaddr_storage spinfo_address;
@@ -525,6 +533,10 @@ typedef struct {
   sctp_assoc_t associd;
   int sd;
 } sctp_peeloff_arg_t;
+typedef struct {
+  sctp_peeloff_arg_t p_arg;
+  unsigned flags;
+} sctp_peeloff_flags_arg_t;
 struct sctp_paddrthlds {
   sctp_assoc_t spt_assoc_id;
   struct sockaddr_storage spt_address;
@@ -610,5 +622,11 @@ struct sctp_add_streams {
   sctp_assoc_t sas_assoc_id;
   uint16_t sas_instrms;
   uint16_t sas_outstrms;
+};
+enum sctp_sched_type {
+  SCTP_SS_FCFS,
+  SCTP_SS_PRIO,
+  SCTP_SS_RR,
+  SCTP_SS_MAX = SCTP_SS_RR
 };
 #endif

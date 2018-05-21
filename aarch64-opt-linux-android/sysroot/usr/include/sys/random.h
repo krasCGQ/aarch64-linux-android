@@ -39,11 +39,11 @@ __BEGIN_DECLS
 /* See also arc4random_buf in <stdlib.h>, which is available in all API levels. */
 
 
-#if __ANDROID_API__ >= __ANDROID_API_FUTURE__
-int getentropy(void* __buffer, size_t __buffer_size) __wur __INTRODUCED_IN_FUTURE;
+#if __ANDROID_API__ >= 28
+int getentropy(void* __buffer, size_t __buffer_size) __wur __INTRODUCED_IN(28);
 
-ssize_t getrandom(void* __buffer, size_t __buffer_size, unsigned int __flags) __wur __INTRODUCED_IN_FUTURE;
-#endif /* __ANDROID_API__ >= __ANDROID_API_FUTURE__ */
+ssize_t getrandom(void* __buffer, size_t __buffer_size, unsigned int __flags) __wur __INTRODUCED_IN(28);
+#endif /* __ANDROID_API__ >= 28 */
 
 
 __END_DECLS

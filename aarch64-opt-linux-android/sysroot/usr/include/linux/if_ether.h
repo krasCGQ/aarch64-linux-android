@@ -19,6 +19,7 @@
 #ifndef _UAPI_LINUX_IF_ETHER_H
 #define _UAPI_LINUX_IF_ETHER_H
 #include <linux/types.h>
+#include <linux/libc-compat.h>
 #define ETH_ALEN 6
 #define ETH_HLEN 14
 #define ETH_ZLEN 60
@@ -51,6 +52,7 @@
 #define ETH_P_ATALK 0x809B
 #define ETH_P_AARP 0x80F3
 #define ETH_P_8021Q 0x8100
+#define ETH_P_ERSPAN 0x88BE
 #define ETH_P_IPX 0x8137
 #define ETH_P_IPV6 0x86DD
 #define ETH_P_PAUSE 0x8808
@@ -80,11 +82,13 @@
 #define ETH_P_FIP 0x8914
 #define ETH_P_80221 0x8917
 #define ETH_P_HSR 0x892F
+#define ETH_P_NSH 0x894F
 #define ETH_P_LOOPBACK 0x9000
 #define ETH_P_QINQ1 0x9100
 #define ETH_P_QINQ2 0x9200
 #define ETH_P_QINQ3 0x9300
 #define ETH_P_EDSA 0xDADA
+#define ETH_P_IFE 0xED3E
 #define ETH_P_AF_IUCV 0xFBFB
 #define ETH_P_802_3_MIN 0x0600
 #define ETH_P_802_3 0x0001
@@ -112,9 +116,12 @@
 #define ETH_P_IEEE802154 0x00F6
 #define ETH_P_CAIF 0x00F7
 #define ETH_P_XDSA 0x00F8
+#define ETH_P_MAP 0x00F9
+#if __UAPI_DEF_ETHHDR
 struct ethhdr {
   unsigned char h_dest[ETH_ALEN];
   unsigned char h_source[ETH_ALEN];
   __be16 h_proto;
 } __attribute__((packed));
+#endif
 #endif

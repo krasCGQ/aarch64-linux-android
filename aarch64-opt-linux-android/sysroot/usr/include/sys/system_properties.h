@@ -43,11 +43,7 @@ typedef struct prop_info prop_info;
 /*
  * Sets system property `name` to `value`, creating the system property if it doesn't already exist.
  */
-
-#if __ANDROID_API__ >= 12
 int __system_property_set(const char* __name, const char* __value) __INTRODUCED_IN(12);
-#endif /* __ANDROID_API__ >= 12 */
-
 
 /*
  * Returns a `prop_info` corresponding system property `name`, or nullptr if it doesn't exist.

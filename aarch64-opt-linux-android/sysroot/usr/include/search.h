@@ -45,20 +45,20 @@ void remque(void* __element) __INTRODUCED_IN(21);
 
 
 
-#if __ANDROID_API__ >= __ANDROID_API_FUTURE__
-int hcreate(size_t) __INTRODUCED_IN_FUTURE;
-void hdestroy(void) __INTRODUCED_IN_FUTURE;
-ENTRY* hsearch(ENTRY, ACTION) __INTRODUCED_IN_FUTURE;
-#endif /* __ANDROID_API__ >= __ANDROID_API_FUTURE__ */
+#if __ANDROID_API__ >= 28
+int hcreate(size_t) __INTRODUCED_IN(28);
+void hdestroy(void) __INTRODUCED_IN(28);
+ENTRY* hsearch(ENTRY, ACTION) __INTRODUCED_IN(28);
+#endif /* __ANDROID_API__ >= 28 */
 
 
 #if defined(__USE_BSD) || defined(__USE_GNU)
 
-#if __ANDROID_API__ >= __ANDROID_API_FUTURE__
-int hcreate_r(size_t, struct hsearch_data*) __INTRODUCED_IN_FUTURE;
-void hdestroy_r(struct hsearch_data*) __INTRODUCED_IN_FUTURE;
-int hsearch_r(ENTRY, ACTION, ENTRY**, struct hsearch_data*) __INTRODUCED_IN_FUTURE;
-#endif /* __ANDROID_API__ >= __ANDROID_API_FUTURE__ */
+#if __ANDROID_API__ >= 28
+int hcreate_r(size_t, struct hsearch_data*) __INTRODUCED_IN(28);
+void hdestroy_r(struct hsearch_data*) __INTRODUCED_IN(28);
+int hsearch_r(ENTRY, ACTION, ENTRY**, struct hsearch_data*) __INTRODUCED_IN(28);
+#endif /* __ANDROID_API__ >= 28 */
 
 #endif
 

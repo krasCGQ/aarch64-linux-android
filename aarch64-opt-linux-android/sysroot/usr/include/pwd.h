@@ -93,12 +93,8 @@ void endpwent(void) __INTRODUCED_IN(26);
 #endif /* __ANDROID_API__ >= 26 */
 
 
-
-#if __ANDROID_API__ >= 12
 int getpwnam_r(const char* __name, struct passwd* __pwd, char* __buf, size_t __n, struct passwd** __result) __INTRODUCED_IN(12);
 int getpwuid_r(uid_t __uid, struct passwd* __pwd, char* __buf, size_t __n, struct passwd** __result) __INTRODUCED_IN(12);
-#endif /* __ANDROID_API__ >= 12 */
-
 
 __END_DECLS
 
