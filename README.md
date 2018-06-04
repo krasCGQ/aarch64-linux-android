@@ -34,4 +34,4 @@ Also, to be warned: This toolchain is NOT COMPATIBLE for use with clang.
 
 * [crosstool-NG defconfig](https://github.com/krasCGQ/ct-ng_configs/blob/master/config.aarch64-android)
 * [Script to update git projects and merge crosstool-NG patches](https://github.com/krasCGQ/scripts/blob/master/update_crosstool)
-* [ISL patch](https://github.com/krasCGQ/patches/blob/master/0001-isl--Revert-all-troublesome-changes.patch) (essentialy reverts) - _required if you choose to use latest ISL from git as one of your self-built toolchain components_
+* [ISL patch](https://github.com/krasCGQ/patches/blob/master/isl/0001-isl--Revert-all-troublesome-changes.patch) (essentialy reverts) - _required if you choose to use latest ISL from git as one of your self-built toolchain components_
