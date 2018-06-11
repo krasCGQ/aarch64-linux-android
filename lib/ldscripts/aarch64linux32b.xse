@@ -42,7 +42,7 @@ SECTIONS
   .init           :
   {
     KEEP (*(SORT_NONE(.init)))
-  } =0
+  } =0x1f2003d5
   .plt            : ALIGN(16) { *(.plt) *(.iplt) }
   .text           :
   {
@@ -53,11 +53,11 @@ SECTIONS
     *(.text .stub .text.* .gnu.linkonce.t.*)
     /* .gnu.warning sections are handled specially by elf32.em.  */
     *(.gnu.warning)
-  } =0
+  } =0x1f2003d5
   .fini           :
   {
     KEEP (*(SORT_NONE(.fini)))
-  } =0
+  } =0x1f2003d5
   PROVIDE (__etext = .);
   PROVIDE (_etext = .);
   PROVIDE (etext = .);
@@ -84,7 +84,10 @@ SECTIONS
   .gcc_except_table   : ONLY_IF_RW { *(.gcc_except_table .gcc_except_table.*) }
   .exception_ranges   : ONLY_IF_RW { *(.exception_ranges .exception_ranges*) }
   /* Thread Local Storage sections  */
-  .tdata	  : { *(.tdata .tdata.* .gnu.linkonce.td.*) }
+  .tdata	  :
+   {
+     *(.tdata .tdata.* .gnu.linkonce.td.*)
+   }
   .tbss		  : { *(.tbss .tbss.* .gnu.linkonce.tb.*) *(.tcommon) }
   .preinit_array     :
   {
@@ -142,10 +145,10 @@ SECTIONS
     SORT(CONSTRUCTORS)
   }
   .data1          : { *(.data1) }
-  _edata = .; PROVIDE (edata = .);
+  PROVIDE (_edata = .); PROVIDE (edata = .);
   . = .;
-  __bss_start = .;
-  __bss_start__ = .;
+  PROVIDE (__bss_start = .);
+  PROVIDE (__bss_start__ = .);
   .bss            :
   {
    *(.dynbss)
@@ -158,12 +161,12 @@ SECTIONS
       pad the .data section.  */
    . = ALIGN(. != 0 ? 32 / 8 : 1);
   }
-  _bss_end__ = . ; __bss_end__ = . ;
+  PROVIDE (_bss_end__ = .); PROVIDE (__bss_end__ = .);
   . = ALIGN(32 / 8);
   . = SEGMENT_START("ldata-segment", .);
   . = ALIGN(32 / 8);
-  __end__ = . ;
-  _end = .; PROVIDE (end = .);
+  PROVIDE (__end__ = .);
+  PROVIDE (_end = .); PROVIDE (end = .);
   . = DATA_SEGMENT_END (.);
   /* Stabs debugging sections.  */
   .stab          0 : { *(.stab) }
