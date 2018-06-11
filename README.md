@@ -1,4 +1,4 @@
-# Aarch64 Prebuilt GCCs
+# AArch64 Prebuilt GCCs
 
 Bleeding edge GNU/Linaro GCC toolchains built from sources using latest git version of [crosstool-NG](https://github.com/crosstool-ng/crosstool-ng). These prebuilt toolchains are primarily for building kernels, hence only CC compiler is exist. Additionally, all toolchains are generic-optimized so it should be compatible with all ARM64 devices.
 
