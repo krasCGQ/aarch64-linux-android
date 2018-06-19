@@ -44,7 +44,7 @@ SECTIONS
   .init           :
   {
     KEEP (*(SORT_NONE(.init)))
-  } =0x1f2003d5
+  } =0
   .plt            : { *(.plt) *(.iplt) }
   .text           :
   {
@@ -55,11 +55,11 @@ SECTIONS
     *(.text .stub .text.* .gnu.linkonce.t.*)
     /* .gnu.warning sections are handled specially by elf32.em.  */
     *(.gnu.warning)
-  } =0x1f2003d5
+  } =0
   .fini           :
   {
     KEEP (*(SORT_NONE(.fini)))
-  } =0x1f2003d5
+  } =0
   PROVIDE (__etext = .);
   PROVIDE (_etext = .);
   PROVIDE (etext = .);
@@ -82,11 +82,7 @@ SECTIONS
   .gcc_except_table   : ONLY_IF_RW { *(.gcc_except_table .gcc_except_table.*) }
   .exception_ranges   : ONLY_IF_RW { *(.exception_ranges .exception_ranges*) }
   /* Thread Local Storage sections  */
-  .tdata	  :
-   {
-     PROVIDE_HIDDEN (__tdata_start = .);
-     *(.tdata .tdata.* .gnu.linkonce.td.*)
-   }
+  .tdata	  : { *(.tdata .tdata.* .gnu.linkonce.td.*) }
   .tbss		  : { *(.tbss .tbss.* .gnu.linkonce.tb.*) *(.tcommon) }
   .preinit_array     :
   {
@@ -144,7 +140,7 @@ SECTIONS
   .got.plt        : { *(.got.plt)  *(.igot.plt) }
   .data           :
   {
-    __data_start = .;
+    __data_start = . ;
     *(.data .data.* .gnu.linkonce.d.*)
     SORT(CONSTRUCTORS)
   }
@@ -165,11 +161,11 @@ SECTIONS
       pad the .data section.  */
    . = ALIGN(. != 0 ? 64 / 8 : 1);
   }
-  _bss_end__ = .; __bss_end__ = .;
+  _bss_end__ = . ; __bss_end__ = . ;
   . = ALIGN(64 / 8);
   . = SEGMENT_START("ldata-segment", .);
   . = ALIGN(64 / 8);
-  __end__ = .;
+  __end__ = . ;
   _end = .; PROVIDE (end = .);
   .stack         0x80000 :
   {

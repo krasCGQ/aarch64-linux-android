@@ -42,18 +42,18 @@ SECTIONS
   .init         0 :
   {
     KEEP (*(SORT_NONE(.init)))
-  } =0x1f2003d5
+  } =0
   .plt          0 : { *(.plt) *(.iplt) }
   .text         0 :
   {
     *(.text .stub)
     /* .gnu.warning sections are handled specially by elf32.em.  */
     *(.gnu.warning)
-  } =0x1f2003d5
+  } =0
   .fini         0 :
   {
     KEEP (*(SORT_NONE(.fini)))
-  } =0x1f2003d5
+  } =0
   .rodata       0 : { *(.rodata) }
   .rodata1      0 : { *(.rodata1) }
   .eh_frame_hdr : { *(.eh_frame_hdr)  }
@@ -72,10 +72,7 @@ SECTIONS
   .gcc_except_table 0 : ONLY_IF_RW { *(.gcc_except_table .gcc_except_table.*) }
   .exception_ranges 0 : ONLY_IF_RW { *(.exception_ranges .exception_ranges*) }
   /* Thread Local Storage sections  */
-  .tdata	0 :
-   {
-     *(.tdata)
-   }
+  .tdata	0 : { *(.tdata) }
   .tbss		0 : { *(.tbss) }
   .jcr          0 : { KEEP (*(.jcr)) }
   .dynamic      0 : { *(.dynamic) }

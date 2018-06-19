@@ -112,11 +112,7 @@ SECTIONS
   .gcc_except_table   : ONLY_IF_RW { *(.gcc_except_table .gcc_except_table.*) }
   .exception_ranges   : ONLY_IF_RW { *(.exception_ranges .exception_ranges*) }
   /* Thread Local Storage sections  */
-  .tdata	  :
-   {
-     PROVIDE_HIDDEN (__tdata_start = .);
-     *(.tdata .tdata.* .gnu.linkonce.td.*)
-   }
+  .tdata	  : { *(.tdata .tdata.* .gnu.linkonce.td.*) }
   .tbss		  : { *(.tbss .tbss.* .gnu.linkonce.tb.*) *(.tcommon) }
   .preinit_array     :
   {
@@ -173,7 +169,7 @@ SECTIONS
   .got            : { *(.got.plt) *(.igot.plt) *(.got) *(.igot) }
   .data           :
   {
-    __data_start = .;
+    __data_start = . ;
     *(.data .data.* .gnu.linkonce.d.*)
     SORT(CONSTRUCTORS)
   }
@@ -194,11 +190,11 @@ SECTIONS
       pad the .data section.  */
    . = ALIGN(. != 0 ? 32 / 8 : 1);
   }
-  _bss_end__ = .; __bss_end__ = .;
+  _bss_end__ = . ; __bss_end__ = . ;
   . = ALIGN(32 / 8);
   . = SEGMENT_START("ldata-segment", .);
   . = ALIGN(32 / 8);
-  __end__ = .;
+  __end__ = . ;
   _end = .; PROVIDE (end = .);
   .stack         0x80000 :
   {
