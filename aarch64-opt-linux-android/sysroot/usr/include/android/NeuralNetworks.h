@@ -1409,8 +1409,7 @@ typedef enum {
      */
     ANEURALNETWORKS_TANH = 28,
 
-// TODO: change to __ANDROID_API__ >= __ANDROID_API_P__ once available.
-#if __ANDROID_API__ > __ANDROID_API_O_MR1__
+#if __ANDROID_API__ >= __ANDROID_API_P__
     // TODO: make the description easier to understand.
     /**
      * BatchToSpace for N-dimensional tensors.
@@ -1702,7 +1701,7 @@ typedef enum {
      * * 0: A tensor of the same {@link OperandCode} as input0.
      */
     ANEURALNETWORKS_TRANSPOSE = 37,
-#endif
+#endif // __ANDROID_API__ >= __ANDROID_API_P__
 } OperationCode;
 
 /**
@@ -1911,11 +1910,48 @@ typedef struct ANeuralNetworksExecution ANeuralNetworksExecution;
 /**
  * ANeuralNetworksOperandType describes the type of an operand.
  * This structure is used to describe both scalars and tensors.
+ *
+ * A tensor operand type must have a specified rank (number of
+ * dimensions) but may have any of its dimensions unspecified.
+ *
+ * A tensor operand type with all dimensions specified is "fully
+ * specified".  Whenever possible (i.e., whenever the dimensions are
+ * known at model construction time), a tensor operand type should be
+ * (but is not required to be) fully specified, in order to enable the
+ * best possible performance.
+ *
+ * If a tensor operand's type is not fully specified, the dimensions
+ * of the operand are deduced from the operand types and values of the
+ * operation for which that operand is an output.
+ *
+ * <p>In the following situations, a tensor operand type must be fully
+ * specified:<ul>
+ *     <li>The operand has a constant value, set by
+ *         {@link ANeuralNetworksModel_setOperandValue} (with a
+ *         non-nullptr buffer) or
+ *         {@link ANeuralNetworksModel_setOperandValueFromMemory}.</li>
+ *     <li>The operand is a model input or model output (see
+ *         {@link ANeuralNetworksModel_identifyInputsAndOutputs}).  A
+ *         fully specified tensor operand type must either be provided
+ *         to {@link ANeuralNetworksModel_addOperand}; or it must be
+ *         provided to the corresponding
+ *         {@link ANeuralNetworksExecution_setInput},
+ *         {@link ANeuralNetworksExecution_setInputFromMemory},
+ *         {@link ANeuralNetworksExecution_setOutput}, or
+ *         {@link ANeuralNetworksModel_setOperandValueFromMemory}.
+ *         EXCEPTION: If the input or output is optional and omitted
+ *         (by passing nullptr for buffer to
+ *         {@link ANeuralNetworksExecution_setInput} or
+ *         {@link ANeuralNetworksExecution_setOutput}) then it need
+ *         not have a fully specified tensor operand type.</li></ul>
+ *
+ * A tensor operand type with some number of unspecified dimensions is
+ * represented by setting each unspecified dimension to 0.
  */
 typedef struct ANeuralNetworksOperandType {
     /** The data type, e.g ANEURALNETWORKS_INT8. */
     int32_t type;
-    /** The number of dimensions. It should be 0 for scalars. */
+    /** The number of dimensions (rank). It should be 0 for scalars. */
     uint32_t dimensionCount;
     /** The dimensions of the tensor. It should be nullptr for scalars. */
     const uint32_t* dimensions;
@@ -2037,10 +2073,11 @@ int ANeuralNetworksModel_finish(ANeuralNetworksModel* model);
  * {@link ANeuralNetworksExecution_setOutputFromMemory} and
  * {@link ANeuralNetworksExecution_setOperandValue}.
  *
- * To build a model that can accomodate inputs of various sizes, as you may want
- * to do for a CNN, set the size of the dimensions that will vary at run time to 0.
- * If you do so, provide the full dimensions when calling
- * {@link ANeuralNetworksExecution_setInput} or {@link ANeuralNetworksExecution_setInputFromMemory}.
+ * To build a model that can accommodate inputs of various sizes, as
+ * you may want to do for a CNN, leave unspecified the dimensions that
+ * will vary at run time.  If you do so, fully specify dimensions
+ * when calling {@link ANeuralNetworksExecution_setInput} or
+ * {@link ANeuralNetworksExecution_setInputFromMemory}.
  *
  * Attempting to modify a model once {@link ANeuralNetworksModel_finish} has been
  * called will return an error.
@@ -2171,6 +2208,7 @@ int ANeuralNetworksModel_identifyInputsAndOutputs(ANeuralNetworksModel* model, u
                                                   const uint32_t* inputs, uint32_t outputCount,
                                                   const uint32_t* outputs);
 
+#if __ANDROID_API__ >= __ANDROID_API_P__
 /**
  * Specifies whether {@link ANEURALNETWORKS_TENSOR_FLOAT32} is allowed to be
  * calculated with range and/or precision as low as that of the IEEE 754 16-bit
@@ -2192,6 +2230,7 @@ int ANeuralNetworksModel_identifyInputsAndOutputs(ANeuralNetworksModel* model, u
  * See {@link ANeuralNetworksModel} for information on multithreaded usage.
  */
 int ANeuralNetworksModel_relaxComputationFloat32toFloat16(ANeuralNetworksModel* model, bool allow);
+#endif // __ANDROID_API__ >= __ANDROID_API_P__
 
 /**
  * Create a {@link ANeuralNetworksCompilation} to compile the given model.
@@ -2318,12 +2357,16 @@ void ANeuralNetworksExecution_free(ANeuralNetworksExecution* execution);
  * @param index The index of the input argument we are setting. It is
  *              an index into the lists passed to
  *              {@link ANeuralNetworksModel_identifyInputsAndOutputs}. It is not
- *              the index associated with {@link ANeuralNetworksModel_addOperand}.
- * @param type The {@link ANeuralNetworksOperandType} of the operand. This should
- *             be used to specify the dimensions that were set to 0 when the
- *             operand was added to the model. All other properties of the type
- *             must be the same as specified in the model. If the type is the
- *             same as specified when the model was built, NULL can be passed.
+ *              the index associated with
+ *              {@link ANeuralNetworksModel_addOperand}.
+ * @param type The {@link ANeuralNetworksOperandType} of the
+ *             operand. Unless the input is omitted, this should be
+ *             used to specify the dimensions that were left
+ *             unspecified when the operand was added to the
+ *             model. All other properties of the type must be the
+ *             same as specified in the model. If the type is the same
+ *             as specified when the model was built, NULL can be
+ *             passed.
  * @param buffer The buffer containing the data.
  * @param length The length in bytes of the buffer.
  *
@@ -2351,11 +2394,13 @@ int ANeuralNetworksExecution_setInput(ANeuralNetworksExecution* execution, int32
  *              an index into the lists passed to
  *              {@link ANeuralNetworksModel_identifyInputsAndOutputs}. It is not
  *              the index associated with {@link ANeuralNetworksModel_addOperand}.
- * @param type The {@link ANeuralNetworksOperandType} of the operand. This can be
- *             used to specify the dimensions that were set to 0 when the operand
- *             was added to the model. All other values must be the same as
- *             specified in the model. If the type is the same as specified when
- *             the model was built, NULL can be passed.
+ * @param type The {@link ANeuralNetworksOperandType} of the
+ *             operand. This should be used to specify the dimensions
+ *             that were left unspecified when the operand was added
+ *             to the model. All other properties of the type must be
+ *             the same as specified in the model. If the type is the
+ *             same as specified when the model was built, NULL can be
+ *             passed.
  * @param memory The memory containing the data.
  * @param offset This specifies the location of the data within the memory.
  *               The offset is in bytes from the start of memory.
@@ -2385,11 +2430,14 @@ int ANeuralNetworksExecution_setInputFromMemory(ANeuralNetworksExecution* execut
  *              an index into the lists passed to
  *              {@link ANeuralNetworksModel_identifyInputsAndOutputs}. It is not
  *              the index associated with {@link ANeuralNetworksModel_addOperand}.
- * @param type The {@link ANeuralNetworksOperandType} of the operand. This can be
- *             used to specify the dimensions that were set to 0 when the operand
- *             was added to the model. All other values must be the same as
- *             specified in the model. If the type is the same as specified when
- *             the model was built, NULL can be passed.
+ * @param type The {@link ANeuralNetworksOperandType} of the
+ *             operand. Unless the output is omitted, this should be
+ *             used to specify the dimensions that were left
+ *             unspecified when the operand was added to the
+ *             model. All other properties of the type must be the
+ *             same as specified in the model. If the type is the same
+ *             as specified when the model was built, NULL can be
+ *             passed.
  * @param buffer The buffer where the data is to be written.
  * @param length The length in bytes of the buffer.
  *
@@ -2417,11 +2465,13 @@ int ANeuralNetworksExecution_setOutput(ANeuralNetworksExecution* execution, int3
  *              an index into the lists passed to
  *              {@link ANeuralNetworksModel_identifyInputsAndOutputs}. It is not
  *              the index associated with {@link ANeuralNetworksModel_addOperand}.
- * @param type The {@link ANeuralNetworksOperandType} of the operand. This can be
- *             used to specify the dimensions that were set to 0 when the operand
- *             was added to the model. All other values must be the same as
- *             specified in the model. If the type is the same as specified when
- *             the model was built, NULL can be passed.
+ * @param type The {@link ANeuralNetworksOperandType} of the operand. This should be
+ *             used to specify the dimensions that were left
+ *             unspecified when the operand was added to the
+ *             model. All other properties of the type must be the
+ *             same as specified in the model. If the type is the same
+ *             as specified when the model was built, NULL can be
+ *             passed.
  * @param memory The memory where the data is to be stored.
  * @param offset This specifies the location of the data within the memory.
  *               The offset is in bytes from the start of memory.
@@ -2484,7 +2534,7 @@ void ANeuralNetworksEvent_free(ANeuralNetworksEvent* event);
 
 __END_DECLS
 
-#endif  //  __ANDROID_API__ >= 27
+#endif  // __ANDROID_API__ >= __ANDROID_API_O_MR1__
 
 #endif  // ANDROID_ML_NN_RUNTIME_NEURAL_NETWORKS_H
 
