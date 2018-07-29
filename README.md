@@ -2,6 +2,12 @@
 
 Bleeding edge GNU/Linaro GCC toolchains built from sources using latest git version of [crosstool-NG](https://github.com/crosstool-ng/crosstool-ng). These prebuilt toolchains are primarily for building kernels, hence only CC compiler is exist. Additionally, all toolchains are generic-optimized so it should be compatible with all ARM64 devices.
 
+## Notice
+
+If you've no idea on how to improve this README file, it's better to not even fork this repository; just clone and use it. Forking a repo for nothing other than bumping your repository count is a waste of resources.
+
+_People are becoming more and more weird these days._
+
 ## Cloning the toolchain
 
 Run this command anywhere on your environment:
