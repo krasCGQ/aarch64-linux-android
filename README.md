@@ -4,7 +4,7 @@ Bleeding edge GNU/Linaro GCC toolchains built from sources using latest git vers
 
 ## Notice
 
-If you've no idea on how to improve this README file, it's better to not even fork this repository; just clone and use it. Forking a repo for nothing other than bumping your repository count is a waste of resources.
+If you've no idea on how to improve this README file, it's better to not even fork this repository; just clone and use it. Forking a repository for nothing other than bumping your repository count is a waste of resources.
 
 _People are becoming more and more weird these days._
 
