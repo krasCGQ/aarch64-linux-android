@@ -56,6 +56,7 @@ SECTIONS
   } =0x1f2003d5
   .rodata       0 : { *(.rodata) }
   .rodata1      0 : { *(.rodata1) }
+  .gnu.build.attributes : { *(.gnu.build.attributes .gnu.build.attributes.*) }
   .eh_frame_hdr : { *(.eh_frame_hdr)  }
   .eh_frame     0 : ONLY_IF_RO { KEEP (*(.eh_frame))  }
   .gcc_except_table 0 : ONLY_IF_RO { *(.gcc_except_table
