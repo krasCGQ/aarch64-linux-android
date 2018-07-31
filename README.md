@@ -19,7 +19,7 @@ $ git clone git://github.com/krasCGQ/aarch64-linux-android -b <branch> --depth=1
 Where `<branch>` is one of these branches:
 * `a53-7.x` - GNU GCC 7.2.1, optimized for Cortex-A53 (deprecated)
 * `opt-gnu-7.x` - GNU GCC 7.3.1 (deprecated)
-* `opt-gnu-8.x` - GNU GCC 8.1.1
+* `opt-gnu-8.x` - GNU GCC 8.2.1
 * `opt-linaro-7.x` - Linaro GCC 7.3.1
 
 ## Using the toolchain
