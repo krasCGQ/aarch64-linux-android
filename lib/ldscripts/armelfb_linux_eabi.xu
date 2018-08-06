@@ -82,7 +82,6 @@ SECTIONS
   .rodata1      0 : { *(.rodata1) }
   .ARM.extab 0 : { *(.ARM.extab) }
   .ARM.exidx 0 : { *(.ARM.exidx) }
-  .gnu.build.attributes : { *(.gnu.build.attributes .gnu.build.attributes.*) }
   .eh_frame_hdr : { *(.eh_frame_hdr)  }
   .eh_frame     0 : ONLY_IF_RO { KEEP (*(.eh_frame))  }
   .gcc_except_table 0 : ONLY_IF_RO { *(.gcc_except_table
@@ -131,6 +130,7 @@ SECTIONS
   .stab.index    0 : { *(.stab.index) }
   .stab.indexstr 0 : { *(.stab.indexstr) }
   .comment       0 : { *(.comment) }
+  .gnu.build.attributes : { *(.gnu.build.attributes .gnu.build.attributes.*) }
   /* DWARF debug sections.
      Symbols in the DWARF debugging sections are relative to the beginning
      of the section so we begin them at 0.  */

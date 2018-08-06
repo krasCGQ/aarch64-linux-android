@@ -95,7 +95,6 @@ SECTIONS
    PROVIDE_HIDDEN (__exidx_start = .);
   .ARM.exidx   : { *(.ARM.exidx* .gnu.linkonce.armexidx.*) }
    PROVIDE_HIDDEN (__exidx_end = .);
-  .gnu.build.attributes : { *(.gnu.build.attributes .gnu.build.attributes.*) }
   .eh_frame_hdr : { *(.eh_frame_hdr) *(.eh_frame_entry .eh_frame_entry.*) }
   .eh_frame       : ONLY_IF_RO { KEEP (*(.eh_frame)) *(.eh_frame.*) }
   .gcc_except_table   : ONLY_IF_RO { *(.gcc_except_table
@@ -211,6 +210,7 @@ SECTIONS
   .stab.index    0 : { *(.stab.index) }
   .stab.indexstr 0 : { *(.stab.indexstr) }
   .comment       0 : { *(.comment) }
+  .gnu.build.attributes : { *(.gnu.build.attributes .gnu.build.attributes.*) }
   /* DWARF debug sections.
      Symbols in the DWARF debugging sections are relative to the beginning
      of the section so we begin them at 0.  */
