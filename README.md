@@ -2,11 +2,13 @@
 
 Due to lack of reliable server to do toolchain builds and my PC can barely handle it, I'm discontinuing this project. Anyone who has enough resources can continue it with help of resources linked below.
 
-GCC 8.2.0 patches may fail to apply on upstream GCC 8.2.x (last time I was able to build there were 2 failing patches, dunno now). In that case, please apply the failing patch and resolve the conflicts manually then run the build function once again.
+GCC 8.2.0 patches may fail to apply on upstream GCC 8.2.x (last time I was able to build there were 2 failing patches, dunno now). In that case, please apply the failing patches and resolve the conflicts manually then run the build function once again.
 
 If you get any errors while building, they're your own problem. Don't report any issue to crosstool-NG as they won't care if you don't follow default settings for most of the configuration (which I don't).
 
-And if you choose to continue the project, good luck.
+Finally, to be able to extract the GMP snapshot tarball, you need to install or build `lzip` from source.
+
+And, if you choose to continue the project, good luck.
 
 # AArch64 Prebuilt GCCs
 
