@@ -1,3 +1,13 @@
+# DEPRECATION NOTICE
+
+Due to lack of reliable server to do toolchain builds and my PC can barely handle it, I'm discontinuing this project. Anyone who has enough resources can continue it with help of resources linked below.
+
+GCC 8.2.0 patches may fail to apply on upstream GCC 8.2.x (last time I was able to build there were 2 failing patches, dunno now). In that case, please apply the failing patch and resolve the conflicts manually then run the build function once again.
+
+If you get any errors while building, they're your own problem. Don't report any issue to crosstool-NG as they won't care if you don't follow default settings for most of the configuration (which I don't).
+
+And if you choose to continue the project, good luck.
+
 # AArch64 Prebuilt GCCs
 
 Bleeding edge GNU/Linaro GCC toolchains built from sources using latest git version of [crosstool-NG](https://github.com/crosstool-ng/crosstool-ng). These prebuilt toolchains are primarily for building kernels, hence only CC compiler is exist. Additionally, all toolchains are generic-optimized so it should be compatible with all ARM64 devices.
@@ -38,6 +48,6 @@ Also, to be warned: This toolchain is NOT COMPATIBLE for use with clang.
 
 ## Resources
 
+* [My server environment script](https://github.com/krasCGQ/scripts/blob/master/env/server), particularly `ct-ng_build` function
 * [crosstool-NG defconfig](https://github.com/krasCGQ/ct-ng_configs/blob/master/config.aarch64-android)
 * [Script to update git projects and merge crosstool-NG patches](https://github.com/krasCGQ/scripts/blob/master/update_crosstool)
-* [ISL fork](https://github.com/krasCGQ/isl) (with essentialy reverts) - _required if you choose to use latest ISL from git as one of your self-built toolchain components and not using latest Glibc from git_
